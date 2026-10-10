@@ -1,0 +1,43 @@
+{
+  "cases": [
+    {
+      "name": "create",
+      "seconds": 1.8070117079769261,
+      "volumes": [
+        1.7058347311089679,
+        2.478039243878569
+      ],
+      "features": [
+        "adsk::fusion::Occurrence",
+        "adsk::fusion::CoilFeature",
+        "adsk::fusion::Sketch",
+        "adsk::fusion::ExtrudeFeature",
+        "adsk::fusion::MoveFeature",
+        "adsk::fusion::Sketch",
+        "adsk::fusion::ExtrudeFeature",
+        "adsk::fusion::CombineFeature",
+        "adsk::fusion::MoveFeature",
+        "adsk::fusion::CombineFeature",
+        "adsk::fusion::CircularPatternFeature",
+        "adsk::fusion::Occurrence",
+        "adsk::fusion::CoilFeature",
+        "adsk::fusion::Sketch",
+        "adsk::fusion::ExtrudeFeature",
+        "adsk::fusion::Sketch",
+        "adsk::fusion::ExtrudeFeature",
+        "adsk::fusion::CombineFeature",
+        "adsk::fusion::OffsetFacesFeature",
+        "adsk::fusion::MoveFeature",
+        "adsk::fusion::Sketch",
+        "adsk::fusion::ExtrudeFeature",
+        "adsk::fusion::CombineFeature",
+        "adsk::fusion::MoveFeature",
+        "adsk::fusion::CombineFeature",
+        "adsk::fusion::CircularPatternFeature"
+      ],
+      "groups": 1
+    }
+  ],
+  "edit_health": [],
+  "passed": true
+}

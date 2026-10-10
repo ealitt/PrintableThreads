@@ -1,0 +1,60 @@
+{
+  "native_sha256": "ba1cb132054d46bb9867e396d15e0a082af56bd5f6e7c32d45faeb6a1da2f04a",
+  "version": "0.5.0",
+  "path": "/Users/eammon/Library/Application Support/Autodesk/Autodesk Fusion 360/API/AddIns/PrintableThreads",
+  "mode": "apply",
+  "internal": true,
+  "nested": false,
+  "original_volume": 3.204424506661727,
+  "groups": 1,
+  "health": [],
+  "features": [
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::ConstructionAxis",
+    "adsk::fusion::OffsetFacesFeature",
+    "adsk::fusion::Occurrence",
+    "adsk::fusion::CoilFeature",
+    "adsk::fusion::OffsetFacesFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::CombineFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::CircularPatternFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::CombineFeature",
+    "adsk::fusion::Sketch"
+  ],
+  "parameters": [
+    "PT1_diameter",
+    "PT1_pitch",
+    "PT1_section",
+    "PT1_length",
+    "PT1_tolerance",
+    "PT1_nut_diameter",
+    "PT1_engagement",
+    "PT1_floor",
+    "PT1_knob_diameter",
+    "PT1_knob_height",
+    "PT1_entry",
+    "PT1_width",
+    "PT1_crest",
+    "PT1_radius",
+    "PT1_starts",
+    "PT1_phase",
+    "PT1_lead",
+    "PT1_height",
+    "PT1_overshoot"
+  ],
+  "solids": [
+    {
+      "component": "(Unsaved)",
+      "volume": 3.3030271227435763,
+      "regions": 1
+    }
+  ],
+  "passed": true
+}

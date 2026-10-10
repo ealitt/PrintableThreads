@@ -1,0 +1,32 @@
+[
+  {
+    "radius": 0,
+    "cut_screw": true,
+    "error": "Traceback (most recent call last):\n  File \"native_profile_cases.py\", line 15, in <module>\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 360, in create\n    body=builder.combine(c,body,ribs,OP.JoinFeatureOperation if female==spec.cut_screw else OP.CutFeatureOperation,'Join nut rib' if female and spec.cut_screw else 'Cut thread' if female or spec.cut_screw else 'Join screw rib')\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 107, in combine\n    pattern=c.features.circularPatternFeatures.add(inp);pattern.name='Printable thread starts'\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 23011, in add\n    return _fusion.CircularPatternFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : C-Pattern1 / Compute Failed // ASM_API_FAILED -   The operation failed.\n    Try adjusting the values or changing the input geometry.\n",
+    "seconds": 2.965723125031218
+  },
+  {
+    "radius": 0.15,
+    "cut_screw": true,
+    "error": "Traceback (most recent call last):\n  File \"native_profile_cases.py\", line 15, in <module>\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 360, in create\n    body=builder.combine(c,body,ribs,OP.JoinFeatureOperation if female==spec.cut_screw else OP.CutFeatureOperation,'Join nut rib' if female and spec.cut_screw else 'Cut thread' if female or spec.cut_screw else 'Join screw rib')\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 107, in combine\n    pattern=c.features.circularPatternFeatures.add(inp);pattern.name='Printable thread starts'\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 23011, in add\n    return _fusion.CircularPatternFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : C-Pattern1 / Compute Failed // ASM_API_FAILED -   The operation failed.\n    Try adjusting the values or changing the input geometry.\n",
+    "seconds": 3.6715554170077667
+  },
+  {
+    "radius": 0.3,
+    "cut_screw": true,
+    "error": "Traceback (most recent call last):\n  File \"native_profile_cases.py\", line 15, in <module>\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 360, in create\n    body=builder.combine(c,body,ribs,OP.JoinFeatureOperation if female==spec.cut_screw else OP.CutFeatureOperation,'Join nut rib' if female and spec.cut_screw else 'Cut thread' if female or spec.cut_screw else 'Join screw rib')\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 107, in combine\n    pattern=c.features.circularPatternFeatures.add(inp);pattern.name='Printable thread starts'\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 23011, in add\n    return _fusion.CircularPatternFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : C-Pattern1 / Compute Failed // ASM_API_FAILED -   The operation failed.\n    Try adjusting the values or changing the input geometry.\n",
+    "seconds": 3.781585125019774
+  },
+  {
+    "radius": 0,
+    "cut_screw": false,
+    "error": "Traceback (most recent call last):\n  File \"native_profile_cases.py\", line 15, in <module>\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 357, in create\n    if spec.radial_clearance>0:cutter=builder.offset_mating(c,cutter,1,occ)\n                                      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 269, in offset_mating\n    feature=c.features.offsetFacesFeatures.add(inp);feature.name='Uniform normal nut mating clearance'\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 54079, in add\n    return _fusion.OffsetFacesFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : OffsetFaces1 / Compute Failed // ASM_REM_NO_SOLUTION -   The body could not be repaired after deleting faces.\n    Try changing the selection, or use the Delete tool in the Surface workspace to delete geometry without repairing the gap.\n",
+    "seconds": 5.5493625000235625
+  },
+  {
+    "radius": 0.15,
+    "cut_screw": false,
+    "error": "Traceback (most recent call last):\n  File \"native_profile_cases.py\", line 15, in <module>\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 357, in create\n    if spec.radial_clearance>0:cutter=builder.offset_mating(c,cutter,1,occ)\n                                      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 269, in offset_mating\n    feature=c.features.offsetFacesFeatures.add(inp);feature.name='Uniform normal nut mating clearance'\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 54079, in add\n    return _fusion.OffsetFacesFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : OffsetFaces1 / Compute Failed // ASM_LOP_TWK_NO_VERT -   The operation could not create a valid result.\n    Try adjusting the values or changing the inputs.\n",
+    "seconds": 5.816510625008959
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "internal": false,
+    "reverse": false,
+    "expected_volume": 1.1358751869994128,
+    "volume": 1.1367496003254431,
+    "passed": true
+  },
+  {
+    "internal": true,
+    "reverse": false,
+    "volume": 3.303302767948643,
+    "passed": true
+  },
+  {
+    "internal": true,
+    "reverse": true,
+    "volume": 3.3043074794857192,
+    "passed": true
+  }
+]

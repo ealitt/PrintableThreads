@@ -1,0 +1,102 @@
+{
+  "fusion": "2704.1.53",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "steps": [
+    {
+      "case": "nominal",
+      "seconds": 3.9692740440368652,
+      "male_volume_cm3": 2.266399017763709,
+      "female_volume_cm3": 2.145744619350544
+    },
+    {
+      "case": "nominal",
+      "section_checks": 12,
+      "section_tolerance_mm": 0.06
+    },
+    {
+      "case": "nominal",
+      "intersections_cm3": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "three-start",
+      "seconds": 2.207237958908081,
+      "male_volume_cm3": 1.565780617446881,
+      "female_volume_cm3": 2.0883757365877815
+    },
+    {
+      "case": "three-start",
+      "section_checks": 12,
+      "section_tolerance_mm": 0.06
+    },
+    {
+      "case": "three-start",
+      "intersections_cm3": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "left",
+      "seconds": 4.159867763519287,
+      "male_volume_cm3": 2.266374103905247,
+      "female_volume_cm3": 2.1457170640003174
+    },
+    {
+      "case": "left",
+      "section_checks": 12,
+      "section_tolerance_mm": 0.06
+    },
+    {
+      "case": "left",
+      "intersections_cm3": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "fractional",
+      "seconds": 2.0280609130859375,
+      "male_volume_cm3": 0.18885032504445692,
+      "female_volume_cm3": 2.1545308611348486
+    },
+    {
+      "case": "fractional",
+      "section_checks": 12,
+      "section_tolerance_mm": 0.06
+    },
+    {
+      "case": "fractional",
+      "intersections_cm3": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "owned_regenerate": true,
+      "knob_solid": true,
+      "blind_floor": true
+    },
+    {
+      "apply_internal": false,
+      "target_only": true,
+      "rotated_occurrence": true
+    },
+    {
+      "apply_internal": true,
+      "target_only": true,
+      "rotated_occurrence": true
+    },
+    {
+      "downstream_edit_blocked": true
+    },
+    "rounded profiles, section checks, trim, join, female cut and coordinated fit passed"
+  ],
+  "status": "passed"
+}

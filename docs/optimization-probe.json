@@ -1,0 +1,212 @@
+[
+  {
+    "name": "default",
+    "old_seconds": 2.9459052089951,
+    "old_steps": 73,
+    "old_knob_steps": 21,
+    "new_seconds": 2.4334617920103483,
+    "new_steps": 34,
+    "new_knob_steps": 2,
+    "difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "edit_seconds": {
+      "knob_diameter": 0.31849591596983373,
+      "knob_height": 0.32041874999413267,
+      "length": 0.32178741600364447,
+      "engagement": 0.6248270829673856,
+      "entry": 0.6242907499545254,
+      "floor": 0.62545091699576,
+      "pitch": 0.3098674590000883,
+      "starts": 0.31047804199624807,
+      "section": 0.3142124159494415,
+      "tolerance": 0.3033559170435183
+    },
+    "old_full_recompute_seconds": 0.3445148749742657,
+    "edited_difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "name": "blind",
+    "old_seconds": 3.2346142919850536,
+    "old_steps": 75,
+    "old_knob_steps": 21,
+    "new_seconds": 2.7274113330058753,
+    "new_steps": 37,
+    "new_knob_steps": 2,
+    "difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "edit_seconds": {
+      "knob_diameter": 0.3098085420206189,
+      "knob_height": 0.30832379194907844,
+      "length": 0.3123005829984322,
+      "engagement": 0.6295814589830115,
+      "entry": 0.6283562500029802,
+      "floor": 0.6332814579945989,
+      "pitch": 0.3174313749768771,
+      "starts": 0.32009133300743997,
+      "section": 0.3055619160295464,
+      "tolerance": 0.3097472079680301
+    },
+    "old_full_recompute_seconds": 0.3404267090372741,
+    "edited_difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "name": "cylinder",
+    "old_seconds": 2.563051041972358,
+    "old_steps": 49,
+    "old_knob_steps": 3,
+    "new_seconds": 2.4067430830327794,
+    "new_steps": 34,
+    "new_knob_steps": 2,
+    "difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "edit_seconds": {
+      "knob_diameter": 0.32113216700963676,
+      "knob_height": 0.3221280840225518,
+      "length": 0.3251431669923477,
+      "engagement": 0.6413632910116576,
+      "entry": 0.6346048330306076,
+      "floor": 0.6321319580310956,
+      "pitch": 0.3266562079661526,
+      "starts": 0.3137105840141885,
+      "section": 0.3111217910191044,
+      "tolerance": 0.3096868750290014
+    },
+    "old_full_recompute_seconds": 0.3380043749930337,
+    "edited_difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "name": "lobes12",
+    "old_seconds": 3.5427020409842953,
+    "old_steps": 97,
+    "old_knob_steps": 39,
+    "new_seconds": 2.751556040951982,
+    "new_steps": 34,
+    "new_knob_steps": 2,
+    "difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "edit_seconds": {
+      "knob_diameter": 0.33965329197235405,
+      "knob_height": 0.3409100839635357,
+      "length": 0.34060166601557285,
+      "engagement": 0.6523555410094559,
+      "entry": 0.654866500000935,
+      "floor": 0.6579565409920178,
+      "pitch": 0.3297294580261223,
+      "starts": 0.330588250013534,
+      "section": 0.33030679199146107,
+      "tolerance": 0.3280604579485953
+    },
+    "old_full_recompute_seconds": 0.3729769170167856,
+    "edited_difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "name": "left_swap",
+    "old_seconds": 2.909906500019133,
+    "old_steps": 77,
+    "old_knob_steps": 21,
+    "new_seconds": 2.233104832994286,
+    "new_steps": 38,
+    "new_knob_steps": 2,
+    "difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "edit_seconds": {
+      "knob_diameter": 0.48696495802141726,
+      "knob_height": 0.48750804096926004,
+      "length": 0.5073451249627396,
+      "engagement": 0.5444092500256374,
+      "entry": 0.5395807920140214,
+      "floor": 0.5390918750199489,
+      "pitch": 0.44837795896455646,
+      "starts": 0.30263949994696304,
+      "section": 0.29544720897683874,
+      "tolerance": 0.3058875410351902
+    },
+    "old_full_recompute_seconds": 0.3334563330281526,
+    "edited_difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "passed": true
+  },
+  {
+    "name": "bare",
+    "old_seconds": 2.4114910420030355,
+    "old_steps": 35,
+    "old_knob_steps": 0,
+    "new_seconds": 2.3298159170080908,
+    "new_steps": 29,
+    "new_knob_steps": 0,
+    "difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "edit_seconds": {
+      "knob_diameter": 0.28926229203352705,
+      "knob_height": 0.28787358303088695,
+      "length": 0.2889185000094585,
+      "engagement": 0.6039954169536941,
+      "entry": 0.6139144999906421,
+      "floor": 0.6026588749955408,
+      "pitch": 0.2768822500365786,
+      "starts": 0.2795037080068141,
+      "section": 0.2791484169429168,
+      "tolerance": 0.27764187497086823
+    },
+    "old_full_recompute_seconds": 0.30719070800114423,
+    "edited_difference_volumes_cm3": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "passed": true
+  }
+]

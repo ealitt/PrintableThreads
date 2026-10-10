@@ -1,0 +1,37 @@
+{
+  "cases": [
+    {
+      "name": "nominal",
+      "section_size_mm": 2.0,
+      "outside_diameter_mm": 14.0,
+      "section_checks": 6,
+      "intersection_cm3": 0,
+      "seconds": 0.9878305840247776
+    },
+    {
+      "name": "small",
+      "section_size_mm": 1.0,
+      "outside_diameter_mm": 13.0,
+      "section_checks": 6,
+      "intersection_cm3": 0,
+      "seconds": 1.3802605000091717
+    },
+    {
+      "name": "left",
+      "section_size_mm": 2.0,
+      "outside_diameter_mm": 14.0,
+      "section_checks": 6,
+      "intersection_cm3": 0,
+      "seconds": 1.0132985420059413
+    },
+    {
+      "name": "multi",
+      "section_size_mm": 1.0,
+      "outside_diameter_mm": 13.0,
+      "section_checks": 6,
+      "intersection_cm3": 0,
+      "seconds": 0.6861387909739278
+    }
+  ],
+  "passed": true
+}

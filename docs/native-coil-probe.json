@@ -1,0 +1,48 @@
+{
+  "parameters": [
+    [
+      "d1",
+      "Diameter",
+      "12 mm"
+    ],
+    [
+      "d2",
+      "SectionSize",
+      "2 mm"
+    ],
+    [
+      "d3",
+      "TaperAngle",
+      "0.0 deg"
+    ],
+    [
+      "d4",
+      "Revolutions",
+      "8"
+    ],
+    [
+      "d5",
+      "Height",
+      "24 mm"
+    ]
+  ],
+  "faces": [
+    [
+      "adsk::core::NurbsSurface",
+      18.97981519025872
+    ],
+    [
+      "adsk::core::Plane",
+      0.03141592653589791
+    ],
+    [
+      "adsk::core::Plane",
+      0.03141592653589791
+    ]
+  ],
+  "volume": 0.9474820225045777,
+  "exported": true,
+  "offset_volume": 0.6059015500318493,
+  "health": [],
+  "passed": true
+}

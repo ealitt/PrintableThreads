@@ -1,0 +1,44 @@
+{
+  "cases": [
+    {
+      "name": "circular",
+      "clearance_checks": 8,
+      "nominal_volume_difference": 0.0013379463143390335,
+      "passed": true,
+      "features": 33,
+      "groups": 1,
+      "seconds": 5.3871039589867
+    },
+    {
+      "name": "left_multi",
+      "passed": true,
+      "features": 37,
+      "groups": 1,
+      "seconds": 4.004236125038005
+    },
+    {
+      "name": "swapped",
+      "passed": true,
+      "features": 33,
+      "groups": 1,
+      "seconds": 4.697881750005763
+    },
+    {
+      "name": "knob_cap",
+      "passed": true,
+      "features": 73,
+      "groups": 1,
+      "seconds": 6.102582374995109
+    },
+    {
+      "name": "apply_screw",
+      "passed": true
+    },
+    {
+      "name": "apply_nut",
+      "clearance_checks": 8,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

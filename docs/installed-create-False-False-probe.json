@@ -1,0 +1,94 @@
+{
+  "native_sha256": "9636e2fcb5e4899d1533f32e537473ed27f318f50f1aed019d657f62a2f4067f",
+  "version": "0.5.2",
+  "path": "/Users/eammon/Library/Application Support/Autodesk/Autodesk Fusion 360/API/AddIns/PrintableThreads",
+  "mode": "create",
+  "internal": false,
+  "nested": false,
+  "starts_in_main": true,
+  "timeline_entries": 35,
+  "groups": 1,
+  "health": [],
+  "chamfers": [
+    {
+      "name": "Print edge chamfer",
+      "faces": 4
+    },
+    {
+      "name": "Print edge chamfer",
+      "faces": 4
+    }
+  ],
+  "features": [
+    "adsk::fusion::Occurrence",
+    "adsk::fusion::CoilFeature",
+    "adsk::fusion::Snapshot",
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::CircularPatternFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::CombineFeature",
+    "adsk::fusion::ChamferFeature",
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::Occurrence",
+    "adsk::fusion::CoilFeature",
+    "adsk::fusion::Snapshot",
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::OffsetFacesFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::Sketch",
+    "adsk::fusion::ExtrudeFeature",
+    "adsk::fusion::CombineFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::CircularPatternFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::MoveFeature",
+    "adsk::fusion::CombineFeature",
+    "adsk::fusion::ChamferFeature"
+  ],
+  "parameters": [
+    "PT1_diameter",
+    "PT1_pitch",
+    "PT1_section",
+    "PT1_length",
+    "PT1_tolerance",
+    "PT1_nut_diameter",
+    "PT1_engagement",
+    "PT1_floor",
+    "PT1_knob_diameter",
+    "PT1_knob_height",
+    "PT1_entry",
+    "PT1_width",
+    "PT1_crest",
+    "PT1_radius",
+    "PT1_edge_chamfer",
+    "PT1_starts",
+    "PT1_phase",
+    "PT1_lead",
+    "PT1_height",
+    "PT1_overshoot"
+  ],
+  "solids": [
+    {
+      "component": "PT1_Screw",
+      "volume": 3.6046492501658993,
+      "regions": 1
+    },
+    {
+      "component": "PT1_Nut",
+      "volume": 3.307788376616418,
+      "regions": 1
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,74 @@
+{
+  "version": "2704.1.53",
+  "active_workspace": "FusionSolidEnvironment",
+  "commands": [
+    [
+      "create",
+      true
+    ],
+    [
+      "edit",
+      true
+    ],
+    [
+      "apply",
+      true
+    ],
+    [
+      "fit",
+      true
+    ]
+  ],
+  "create_panel_controls": [
+    "SketchCreate",
+    "TSplineBaseFeatureCreationCommand",
+    "PushDeriveCommand",
+    "SeparatorAfter_PushDeriveCommand",
+    "AutomatedModelingCommand",
+    "Extrude",
+    "Revolve",
+    "Sweep",
+    "SolidLoft",
+    "FusionRibCommand",
+    "FusionWebCommand",
+    "EmbossCmd",
+    "SeparatorAfter_EmbossCmd",
+    "FusionHoleCommand",
+    "FusionThreadCommand",
+    "SeparatorAfter_FusionThreadCommand",
+    "PrimitiveBox",
+    "PrimitiveCylinder",
+    "PrimitiveSphere",
+    "PrimitiveTorus",
+    "PrimitiveCoil",
+    "PrimitivePipe",
+    "SeparatorAfter_PrimitivePipe",
+    "StockModelCommand",
+    "SeparatorAfter_StockModelCommand",
+    "PatternDropDown",
+    "MirrorCommand",
+    "SeparatorAfter_MirrorCommand",
+    "FusionSurfaceThickenCommand",
+    "SurfaceSculpt",
+    "SeparatorAfter_SurfaceSculpt",
+    "FusionFindFeaturesCommand",
+    "EnclosureCommand",
+    "SeparatorAfter_EnclosureCommand",
+    "BaseFeatureCreationCommand",
+    "PCBCreateDropDown",
+    "JointOrigin",
+    "TimelineBuilderCommand",
+    "SeparatorAfter_TimelineBuilderCommand",
+    "HelicalGearAddin",
+    "PrintableThreads_menu"
+  ],
+  "printable_threads_menu": {
+    "found": true,
+    "items": [
+      "PrintableThreads_create",
+      "PrintableThreads_apply",
+      "PrintableThreads_edit",
+      "PrintableThreads_fit"
+    ]
+  }
+}

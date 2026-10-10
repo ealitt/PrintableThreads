@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+# Installer runs as root. Resolve the signed-in user's actual home, never root's.
+user_name=$(/usr/bin/stat -f '%Su' /dev/console)
+case "$user_name" in root|loginwindow|_mbsetupuser|'')
+    echo 'Sign in to the Mac account that uses Fusion before installing.' >&2; exit 1 ;;
+esac
+user_home=$(/usr/bin/dscl . -read "/Users/$user_name" NFSHomeDirectory | /usr/bin/sed 's/^NFSHomeDirectory: //')
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec /bin/sh "$script_dir/install-user.sh" "$script_dir/PrintableThreads" "$user_home" "$user_name"

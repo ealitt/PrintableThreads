@@ -1,0 +1,10 @@
+[
+  {
+    "shape": "Circular",
+    "error": "Traceback (most recent call last):\n  File \"native_twist_probe.py\", line 29, in <module>\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 75236, in add\n    return _fusion.SweepFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : ASM_SWEEP_FACES_INTERSECT -   The sweep would intersect itself.\n    Try reducing the size of the profile, removing regions of high curvature from the path, or try creating the shape using multiple operations.\n"
+  },
+  {
+    "shape": "Trapezoid",
+    "error": "Traceback (most recent call last):\n  File \"native_twist_probe.py\", line 29, in <module>\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 75236, in add\n    return _fusion.SweepFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : ASM_CHAIN_PARALLEL_PATH -   A region of the path is parallel with the swept profile.\n    Try adjusting the path or rotating the profile. If you are using Parallel orientation, try switching to Perpendicular orientation.\n"
+  }
+]

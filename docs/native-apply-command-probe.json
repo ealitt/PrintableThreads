@@ -1,0 +1,55 @@
+{
+  "groups": 1,
+  "marker": 3,
+  "timeline": 4,
+  "health": [],
+  "root_bodies": [
+    [
+      "Body1",
+      true,
+      3.3030271227435763
+    ]
+  ],
+  "features": [
+    [
+      "Extrude1",
+      "adsk::fusion::ExtrudeFeature"
+    ],
+    [
+      "Uniform normal bore clearance",
+      "adsk::fusion::OffsetFacesFeature"
+    ],
+    [
+      "Apply printable thread",
+      "adsk::fusion::CombineFeature"
+    ],
+    [
+      "On-center circular thread Coil",
+      "adsk::fusion::CoilFeature"
+    ],
+    [
+      "Uniform normal thread clearance",
+      "adsk::fusion::OffsetFacesFeature"
+    ],
+    [
+      "Extend thread past both ends",
+      "adsk::fusion::MoveFeature"
+    ],
+    [
+      "Flush thread end envelope",
+      "adsk::fusion::ExtrudeFeature"
+    ],
+    [
+      "Trim both thread ends flush",
+      "adsk::fusion::CombineFeature"
+    ],
+    [
+      "Thread phase rotation",
+      "adsk::fusion::MoveFeature"
+    ],
+    [
+      "RemoveBody-Body1",
+      "adsk::fusion::RemoveFeature"
+    ]
+  ]
+}

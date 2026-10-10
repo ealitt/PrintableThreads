@@ -1,0 +1,54 @@
+[
+  {
+    "type": "sharp",
+    "offset_bodies": [
+      [
+        "Body2",
+        true,
+        "PT1_Probe",
+        100
+      ],
+      [
+        "Body1",
+        false,
+        "(Unsaved)",
+        99
+      ]
+    ],
+    "stitch": [
+      [
+        "Body2",
+        false,
+        "(Unsaved)",
+        99
+      ]
+    ],
+    "error": "Traceback (most recent call last):\n  File \"native_shell_probe.py\", line 24, in <module>\nStopIteration\n"
+  },
+  {
+    "type": "rounded",
+    "offset_bodies": [
+      [
+        "Body2",
+        true,
+        "PT1_Probe",
+        100
+      ],
+      [
+        "Body1",
+        false,
+        "(Unsaved)",
+        99
+      ]
+    ],
+    "stitch": [
+      [
+        "Body2",
+        false,
+        "(Unsaved)",
+        99
+      ]
+    ],
+    "error": "Traceback (most recent call last):\n  File \"native_shell_probe.py\", line 24, in <module>\nStopIteration\n"
+  }
+]

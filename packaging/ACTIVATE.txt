@@ -1,0 +1,12 @@
+Installation complete
+
+1. Reopen Autodesk Fusion.
+2. Open a design, switch to Solid, and open Create > Printable Threads.
+3. If the menu is missing, press Shift+S, choose the Add-Ins tab, select
+   PrintableThreads, click Run, and enable Run on Startup.
+
+The tool dialog should show version 0.5.2.
+
+Windows: uninstall through Settings > Apps > Installed apps.
+Mac: close Fusion and remove PrintableThreads from your Fusion API/AddIns folder.
+Saved settings and installation backups are retained when uninstalling.

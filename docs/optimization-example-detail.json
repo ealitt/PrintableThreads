@@ -1,0 +1,266 @@
+{
+  "parameters": [
+    {
+      "name": "d1",
+      "role": "Diameter Dimension-2",
+      "expression": "15 mm",
+      "feature": "Sketch1"
+    },
+    {
+      "name": "d2",
+      "role": "AlongDistance",
+      "expression": "50.00 mm",
+      "feature": "Extrude1"
+    },
+    {
+      "name": "d3",
+      "role": "TaperAngle",
+      "expression": "0.0 deg",
+      "feature": "Extrude1"
+    },
+    {
+      "name": "d4",
+      "role": "Diameter",
+      "expression": "15.00 mm",
+      "feature": "CoilPrimitive1"
+    },
+    {
+      "name": "d5",
+      "role": "SectionSize",
+      "expression": "4 mm",
+      "feature": "CoilPrimitive1"
+    },
+    {
+      "name": "d6",
+      "role": "TaperAngle",
+      "expression": "0.0 deg",
+      "feature": "CoilPrimitive1"
+    },
+    {
+      "name": "d7",
+      "role": "Revolutions",
+      "expression": "10",
+      "feature": "CoilPrimitive1"
+    },
+    {
+      "name": "d8",
+      "role": "Pitch",
+      "expression": "-5 mm",
+      "feature": "CoilPrimitive1"
+    },
+    {
+      "name": "d9",
+      "role": "Distance",
+      "expression": "0.2 mm",
+      "feature": "Chamfer1"
+    },
+    {
+      "name": "d10",
+      "role": "Diameter Dimension-2",
+      "expression": "30 mm",
+      "feature": "Sketch3"
+    },
+    {
+      "name": "d11",
+      "role": "Diameter Dimension-3",
+      "expression": "6 mm",
+      "feature": "Sketch3"
+    },
+    {
+      "name": "d12",
+      "role": "C-Pattern1-Count",
+      "expression": "15",
+      "feature": "Sketch3"
+    },
+    {
+      "name": "d13",
+      "role": "C-Pattern1-Angle",
+      "expression": "360.0 deg",
+      "feature": "Sketch3"
+    },
+    {
+      "name": "d14",
+      "role": "AlongDistance",
+      "expression": "-5 mm",
+      "feature": "Extrude2"
+    },
+    {
+      "name": "d15",
+      "role": "TaperAngle",
+      "expression": "0.0 deg",
+      "feature": "Extrude2"
+    },
+    {
+      "name": "d16",
+      "role": "Diameter Dimension-2",
+      "expression": "20 mm",
+      "feature": "Sketch4"
+    },
+    {
+      "name": "d17",
+      "role": "AlongDistance",
+      "expression": "-5 mm",
+      "feature": "Extrude3"
+    },
+    {
+      "name": "d18",
+      "role": "TaperAngle",
+      "expression": "0.0 deg",
+      "feature": "Extrude3"
+    }
+  ],
+  "sketches": [
+    {
+      "name": "Sketch1",
+      "profiles": 1,
+      "circles": 1,
+      "lines": 0,
+      "arcs": 0,
+      "dimensions": 1,
+      "curves": [
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.7499999999999999
+        }
+      ]
+    },
+    {
+      "name": "Sketch3",
+      "profiles": 32,
+      "circles": 16,
+      "lines": 1,
+      "arcs": 1,
+      "dimensions": 2,
+      "curves": [
+        {
+          "type": "adsk::fusion::SketchArc",
+          "radius": 0.7299999999999998
+        },
+        {
+          "type": "adsk::fusion::SketchFixedSpline",
+          "radius": null
+        },
+        {
+          "type": "adsk::fusion::SketchLine",
+          "radius": null
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 1.5000000000000002
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.3
+        }
+      ]
+    },
+    {
+      "name": "Sketch4",
+      "profiles": 2,
+      "circles": 1,
+      "lines": 1,
+      "arcs": 1,
+      "dimensions": 1,
+      "curves": [
+        {
+          "type": "adsk::fusion::SketchArc",
+          "radius": 0.73
+        },
+        {
+          "type": "adsk::fusion::SketchFixedSpline",
+          "radius": null
+        },
+        {
+          "type": "adsk::fusion::SketchLine",
+          "radius": null
+        },
+        {
+          "type": "adsk::fusion::SketchCircle",
+          "radius": 0.9999999999999999
+        }
+      ]
+    }
+  ],
+  "extrudes": [
+    {
+      "name": "Extrude1",
+      "operation": 3,
+      "profiles": 1,
+      "start": "adsk::fusion::ProfilePlaneStartDefinition",
+      "extent": "adsk::fusion::DistanceExtentDefinition",
+      "bodies": 1
+    },
+    {
+      "name": "Extrude2",
+      "operation": 0,
+      "profiles": 32,
+      "start": "adsk::fusion::ProfilePlaneStartDefinition",
+      "extent": "adsk::fusion::DistanceExtentDefinition",
+      "bodies": 1
+    },
+    {
+      "name": "Extrude3",
+      "operation": 1,
+      "profiles": 2,
+      "start": "adsk::fusion::ProfilePlaneStartDefinition",
+      "extent": "adsk::fusion::DistanceExtentDefinition",
+      "bodies": 1
+    }
+  ]
+}

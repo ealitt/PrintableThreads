@@ -1,0 +1,61 @@
+#ifndef Version
+  #define Version "0.5.2"
+#endif
+[Setup]
+AppId={{2FE5661D-F8ED-4BC2-88EE-5B9825D5B8FB}
+AppName=Printable Threads for Autodesk Fusion
+AppVersion={#Version}
+AppPublisher=PrintableThreads
+AppPublisherURL=https://github.com/ealitt/PrintableThreads
+DefaultDirName={userappdata}\Autodesk\Autodesk Fusion 360\API\AddIns\PrintableThreads
+DisableDirPage=yes
+DisableProgramGroupPage=yes
+PrivilegesRequired=lowest
+UsePreviousAppDir=no
+OutputDir=..\..\dist
+OutputBaseFilename=PrintableThreads-{#Version}-Windows-unsigned
+Compression=lzma2
+SolidCompression=yes
+WizardStyle=modern
+SetupLogging=yes
+InfoBeforeFile=..\INSTALL.txt
+InfoAfterFile=..\ACTIVATE.txt
+UninstallDisplayName=Printable Threads for Autodesk Fusion
+CloseApplications=no
+RestartApplications=no
+[Files]
+Source: "..\..\PrintableThreads\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "__pycache__,*.pyc,.DS_Store"
+[Code]
+var
+  BackupPath: String;
+  Completed: Boolean;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  Target, BackupRoot: String;
+begin
+  if CurStep = ssInstall then begin
+    Target := ExpandConstant('{app}');
+    if DirExists(Target) then begin
+      BackupRoot := ExtractFileDir(ExtractFileDir(Target)) + '\PrintableThreads-backups';
+      if not ForceDirectories(BackupRoot) then
+        RaiseException('Could not create backup folder. Installation stopped.');
+      BackupPath := BackupRoot + '\' + GetDateTimeString('yyyymmdd-hhnnss-zzz', '', '');
+      if DirExists(BackupPath) then
+        RaiseException('Backup already exists. Please try again in a moment.');
+      if not RenameFile(Target, BackupPath) then
+        RaiseException('Could not back up the installed version. Close Fusion and try again.');
+      Log('Previous installation saved in ' + BackupPath);
+    end;
+  end;
+  if CurStep = ssPostInstall then Completed := True;
+end;
+
+procedure DeinitializeSetup();
+begin
+  if (not Completed) and (BackupPath <> '') and DirExists(BackupPath) then begin
+    if (not DirExists(ExpandConstant('{app}'))) or DelTree(ExpandConstant('{app}'), True, True, True) then
+      if not RenameFile(BackupPath, ExpandConstant('{app}')) then
+        MsgBox('Installation failed. Restore the backup from: ' + BackupPath, mbError, MB_OK);
+  end;
+end;

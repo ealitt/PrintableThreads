@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "reverse",
+      "seconds": 1.5496435000095516,
+      "intersection_cm3": 0
+    },
+    {
+      "name": "left",
+      "seconds": 1.5967603329918347,
+      "intersection_cm3": 0
+    },
+    {
+      "name": "multi",
+      "seconds": 1.0409591250063386,
+      "intersection_cm3": 0
+    },
+    {
+      "name": "legacy_swap",
+      "seconds": 0.9809810830047354,
+      "intersection_cm3": 0
+    },
+    {
+      "name": "trapezoid",
+      "seconds": 6.793255125026917,
+      "intersection_cm3": 0
+    }
+  ],
+  "print_placement_passed": true,
+  "apply_passed": true,
+  "passed": true
+}

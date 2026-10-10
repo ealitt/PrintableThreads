@@ -1,0 +1,168 @@
+[
+  {
+    "name": "standard",
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "chamfer_faces": 4,
+        "distance_mm": 0.2,
+        "volume": 1.1308729642800546,
+        "min_y": -1.2816622739105997e-16
+      },
+      {
+        "name": "PT1_Nut",
+        "chamfer_faces": 4,
+        "distance_mm": 0.2,
+        "volume": 3.307788376616418,
+        "min_y": -2.4424906541753446e-16
+      }
+    ],
+    "intersection_regions": 0,
+    "intersection_volume_cm3": 0,
+    "passed": true
+  },
+  {
+    "name": "user_size",
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "chamfer_faces": 4,
+        "distance_mm": 0.20000000000000004,
+        "volume": 3.1448589838707566,
+        "min_y": -1.4516869592366845e-16
+      },
+      {
+        "name": "PT1_Nut",
+        "chamfer_faces": 4,
+        "distance_mm": 0.20000000000000004,
+        "volume": 2.1971515117021796,
+        "min_y": -2.4424906541753446e-16
+      }
+    ],
+    "passed": true
+  },
+  {
+    "name": "small",
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "chamfer_faces": 16,
+        "distance_mm": 0.08000000000000002,
+        "volume": 1.2627127347641118,
+        "min_y": -1.332267629550188e-16
+      },
+      {
+        "name": "PT1_Nut",
+        "chamfer_faces": 16,
+        "distance_mm": 0.08000000000000002,
+        "volume": 3.271318437899795,
+        "min_y": -2.4424906541753446e-16
+      }
+    ],
+    "passed": true
+  },
+  {
+    "name": "swapped",
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "chamfer_faces": 4,
+        "distance_mm": 0.2,
+        "volume": 1.6159225318161425,
+        "min_y": -1.5543122344752193e-16
+      },
+      {
+        "name": "PT1_Nut",
+        "chamfer_faces": 4,
+        "distance_mm": 0.2,
+        "volume": 2.8093337382924384,
+        "min_y": -2.449611606740228e-16
+      }
+    ],
+    "intersection_regions": 0,
+    "intersection_volume_cm3": 0,
+    "passed": true
+  },
+  {
+    "name": "left_multi",
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "chamfer_faces": 8,
+        "distance_mm": 0.2,
+        "volume": 1.1309352780880038,
+        "min_y": -1.332267629550188e-16
+      },
+      {
+        "name": "PT1_Nut",
+        "chamfer_faces": 8,
+        "distance_mm": 0.2,
+        "volume": 3.306135965458982,
+        "min_y": -2.4424906541753446e-16
+      }
+    ],
+    "intersection_regions": 0,
+    "intersection_volume_cm3": 0,
+    "passed": true
+  },
+  {
+    "name": "knob_cap",
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "chamfer_faces": 4,
+        "distance_mm": 0.2,
+        "volume": 3.6046492501658993,
+        "min_y": -2.596533585229377e-16
+      },
+      {
+        "name": "PT1_Nut",
+        "chamfer_faces": 4,
+        "distance_mm": 0.2,
+        "volume": 4.068901693748468,
+        "min_y": -2.4424906541753446e-16
+      }
+    ],
+    "passed": true
+  },
+  {
+    "name": "apply",
+    "internal": false,
+    "nested": false,
+    "reverse": false,
+    "passed": true,
+    "chamfer_faces": 8
+  },
+  {
+    "name": "apply",
+    "internal": true,
+    "nested": false,
+    "reverse": false,
+    "passed": true,
+    "chamfer_faces": 8
+  },
+  {
+    "name": "apply",
+    "internal": false,
+    "nested": true,
+    "reverse": false,
+    "passed": true,
+    "chamfer_faces": 8
+  },
+  {
+    "name": "apply",
+    "internal": true,
+    "nested": true,
+    "reverse": false,
+    "passed": true,
+    "chamfer_faces": 8
+  },
+  {
+    "name": "apply",
+    "internal": true,
+    "nested": true,
+    "reverse": true,
+    "passed": true,
+    "chamfer_faces": 8
+  }
+]

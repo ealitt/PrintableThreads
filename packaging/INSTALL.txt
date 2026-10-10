@@ -1,0 +1,8 @@
+Printable Threads for Autodesk Fusion
+
+Close Fusion before installing. This installer copies the add-in for your user
+account. No separate Python installation is needed. Existing add-in files are
+backed up; your saved tool settings and Fusion designs remain unchanged.
+
+This engineering-preview installer is unsigned. Install only a download from
+the ealitt/PrintableThreads GitHub release that you trust.

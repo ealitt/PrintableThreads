@@ -1,0 +1,48 @@
+{
+  "cases": [
+    {
+      "name": "circular",
+      "clearance_checks": 8,
+      "nominal_volume_difference": 0.0013379463143390335,
+      "passed": true,
+      "features": 22,
+      "groups": 1,
+      "seconds": 2.695314791984856
+    },
+    {
+      "name": "left_multi",
+      "passed": true,
+      "features": 30,
+      "groups": 1,
+      "seconds": 2.204061833996093
+    },
+    {
+      "name": "swapped",
+      "passed": true,
+      "features": 22,
+      "groups": 1,
+      "seconds": 2.2269367080007214
+    },
+    {
+      "name": "knob_cap",
+      "passed": true,
+      "features": 60,
+      "groups": 1,
+      "seconds": 2.9128005420207046
+    },
+    {
+      "name": "trapezoid",
+      "error": "Traceback (most recent call last):\n  File \"native_regression_probe.py\", line 55, in <module>\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 338, in create\n    ribs=builder.rib(c,length,spec.cut_screw,offset=(-1 if spec.cut_screw else 1) if female and spec.radial_clearance>0 else 0)\n  File \"/Users/eammon/Documents/GitHub/Fusion-3D-printable-threads/PrintableThreads/fusion_backend/native.py\", line 138, in rib\n    feature=c.features.offsetFacesFeatures.add(c.features.offsetFacesFeatures.createInput(faces,VI(f'{offset}*{p[\"tolerance\"]}')))\n  File \"/Users/eammon/Library/Application Support/Autodesk/webdeploy/production/c139e2731e42a0340acc3d34de2cbdb01237a27c/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\", line 54079, in add\n    return _fusion.OffsetFacesFeatures_add(self, input)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nRuntimeError: 3 : OffsetFaces1 / Compute Failed // ASM_LOP_TWK_NO_VERT -   The operation could not create a valid result.\n    Try adjusting the values or changing the inputs.\n"
+    },
+    {
+      "name": "apply_screw",
+      "passed": true
+    },
+    {
+      "name": "apply_nut",
+      "clearance_checks": 8,
+      "passed": true
+    }
+  ],
+  "passed": false
+}

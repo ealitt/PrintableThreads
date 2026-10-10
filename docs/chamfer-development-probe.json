@@ -1,0 +1,182 @@
+[
+  {
+    "swapped": false,
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "volume": 1.130885024002526,
+        "chamfers": 1,
+        "faces": [
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ],
+          [
+            "adsk::core::Cylinder",
+            0.6000000000000001
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ]
+        ]
+      },
+      {
+        "name": "PT1_Nut",
+        "volume": 3.307788629725868,
+        "chamfers": 1,
+        "faces": [
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::Cylinder",
+            0.6200000000000001
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ],
+          [
+            "adsk::core::Cylinder",
+            1.1
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ]
+        ]
+      }
+    ],
+    "passed": true
+  },
+  {
+    "swapped": true,
+    "parts": [
+      {
+        "name": "PT1_Screw",
+        "volume": 1.6159225318161425,
+        "chamfers": 1,
+        "faces": [
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::Cylinder",
+            0.6000000000000001
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ]
+        ]
+      },
+      {
+        "name": "PT1_Nut",
+        "volume": 2.809276157656231,
+        "chamfers": 1,
+        "faces": [
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Cone",
+            null
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ],
+          [
+            "adsk::core::Cylinder",
+            0.6200000000000001
+          ],
+          [
+            "adsk::core::NurbsSurface",
+            null
+          ],
+          [
+            "adsk::core::Plane",
+            null
+          ],
+          [
+            "adsk::core::Cylinder",
+            1.1
+          ]
+        ]
+      }
+    ],
+    "passed": true
+  }
+]

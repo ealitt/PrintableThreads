@@ -1,0 +1,9 @@
+{
+  "autodeskProduct": "Fusion360",
+  "type": "script",
+  "id": "43e40235-cefb-42e3-b936-d04950711a72",
+  "author": "PrintableThreads",
+  "description": {"": "Verify Apply Printable Thread in a populated Part design."},
+  "version": "1.0.0",
+  "supportedOS": "windows|mac"
+}

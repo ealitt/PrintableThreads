@@ -1,0 +1,9 @@
+{
+  "version": "0.2.1",
+  "default_tolerance_mm": 0.2,
+  "keyboard_length_change_mm": 19,
+  "restored_after_addon_restart": true,
+  "final_length_mm": 18,
+  "source_install_match": true,
+  "unit_tests_passed": 21
+}
