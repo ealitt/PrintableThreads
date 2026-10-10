@@ -30,7 +30,7 @@ def portable(output):
     return target
 
 
-def macos(output):
+def macos(output, signed_info=False):
     if platform.system() != 'Darwin':
         raise RuntimeError('Build macOS packages on macOS.')
     target = output / f'PrintableThreads-{VERSION}-macOS-unsigned.pkg'
@@ -50,7 +50,7 @@ def macos(output):
                         'com.ealitt.printablethreads', '--version', VERSION, str(component)], check=True)
         resources = stage / 'resources'
         resources.mkdir()
-        for name, source in [('welcome.html', 'INSTALL.txt'), ('conclusion.html', 'ACTIVATE.txt')]:
+        for name, source in [('welcome.html', 'INSTALL-SIGNED.txt' if signed_info else 'INSTALL.txt'), ('conclusion.html', 'ACTIVATE.txt')]:
             import html
             text = html.escape((ROOT / 'packaging' / source).read_text())
             (resources / name).write_text('<html><body><pre style="font:14px -apple-system;white-space:pre-wrap">' + text + '</pre></body></html>')
@@ -79,6 +79,7 @@ def checksums(output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--macos', action='store_true')
+    parser.add_argument('--signed-info', action='store_true', help='Installer text for the separate verified signing pipeline')
     parser.add_argument('--checksums-only', action='store_true')
     parser.add_argument('--output', type=Path, default=ROOT / 'dist')
     args = parser.parse_args()
@@ -86,5 +87,5 @@ if __name__ == '__main__':
     if not args.checksums_only:
         print(portable(args.output))
         if args.macos:
-            print(macos(args.output))
+            print(macos(args.output, args.signed_info))
     checksums(args.output)

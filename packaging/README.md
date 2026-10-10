@@ -25,9 +25,14 @@ The Windows EXE uses stable Inno Setup AppId and per-user install/uninstall regi
 
 ## Signing before broad distribution
 
-No signing secrets are committed or uploaded by this workflow. Current assets are
-explicitly named `unsigned`. To produce trusted releases, add a separately reviewed
-signing step **before** checksums and publishing:
+The separate **Sign and notarize an existing release** workflow automates Mac signing,
+notarization, stapling and verification, plus Azure signing of the Windows installer
+and uninstaller. It publishes only after both platform jobs pass. See
+[one-time account and credential setup](../docs/SIGNING-SETUP.md). No accounts or signing
+credentials are configured yet; existing downloads remain unsigned.
+
+No signing secrets are committed or included in release assets. The original build
+workflow still creates assets explicitly named `unsigned`. The signing workflow uses:
 
 - macOS: `productsign` with a Developer ID Installer identity; submit the signed
   PKG with `xcrun notarytool submit --wait` using a keychain profile; staple it with

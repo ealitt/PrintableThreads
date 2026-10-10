@@ -1,0 +1,150 @@
+name: Sign and notarize an existing release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag whose add-in matches main (e.g. v0.5.2)
+        required: true
+        default: v0.5.2
+permissions:
+  contents: read
+concurrency:
+  group: signing-${{ inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  sign:
+    environment: signing
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify release source matches the requested tag
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        shell: bash
+        run: |
+          python -c 'import os,json; v=json.load(open("PrintableThreads/PrintableThreads.manifest"))["version"]; assert os.environ["RELEASE_TAG"] == "v"+v, "Tag does not match current add-in version"'
+          git rev-parse --verify "refs/tags/$RELEASE_TAG"
+          git diff --exit-code "refs/tags/$RELEASE_TAG" -- PrintableThreads
+      - name: Require Mac signing credentials
+        if: runner.os == 'macOS'
+        env:
+          APPLE_INSTALLER_P12_BASE64: ${{ secrets.APPLE_INSTALLER_P12_BASE64 }}
+          APPLE_INSTALLER_P12_PASSWORD: ${{ secrets.APPLE_INSTALLER_P12_PASSWORD }}
+          APPLE_INSTALLER_IDENTITY: ${{ secrets.APPLE_INSTALLER_IDENTITY }}
+          APPLE_NOTARY_KEY_BASE64: ${{ secrets.APPLE_NOTARY_KEY_BASE64 }}
+          APPLE_NOTARY_KEY_ID: ${{ secrets.APPLE_NOTARY_KEY_ID }}
+          APPLE_NOTARY_ISSUER_ID: ${{ secrets.APPLE_NOTARY_ISSUER_ID }}
+        shell: python
+        run: |
+          import os,runpy
+          required=runpy.run_path('packaging/macos/sign.py')['REQUIRED']
+          missing=[k for k in required if not os.environ.get(k)]
+          if missing: raise SystemExit('Configure signing environment secrets: '+', '.join(missing))
+      - name: Build Mac package with signed distribution instructions
+        if: runner.os == 'macOS'
+        run: python packaging/build.py --macos --signed-info
+      - name: Sign, notarize, staple and verify Mac package
+        if: runner.os == 'macOS'
+        env:
+          APPLE_INSTALLER_P12_BASE64: ${{ secrets.APPLE_INSTALLER_P12_BASE64 }}
+          APPLE_INSTALLER_P12_PASSWORD: ${{ secrets.APPLE_INSTALLER_P12_PASSWORD }}
+          APPLE_INSTALLER_IDENTITY: ${{ secrets.APPLE_INSTALLER_IDENTITY }}
+          APPLE_NOTARY_KEY_BASE64: ${{ secrets.APPLE_NOTARY_KEY_BASE64 }}
+          APPLE_NOTARY_KEY_ID: ${{ secrets.APPLE_NOTARY_KEY_ID }}
+          APPLE_NOTARY_ISSUER_ID: ${{ secrets.APPLE_NOTARY_ISSUER_ID }}
+        shell: bash
+        run: |
+          version=$(python -c 'import json; print(json.load(open("PrintableThreads/PrintableThreads.manifest"))["version"])')
+          python packaging/macos/sign.py "dist/PrintableThreads-$version-macOS-unsigned.pkg" "dist/PrintableThreads-$version-macOS.pkg"
+      - name: Require Azure signing configuration
+        if: runner.os == 'Windows'
+        env:
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_SIGNING_ENDPOINT: ${{ vars.AZURE_SIGNING_ENDPOINT }}
+          AZURE_SIGNING_ACCOUNT: ${{ vars.AZURE_SIGNING_ACCOUNT }}
+          AZURE_SIGNING_PROFILE: ${{ vars.AZURE_SIGNING_PROFILE }}
+        shell: pwsh
+        run: |
+          foreach ($name in @('AZURE_CLIENT_ID','AZURE_TENANT_ID','AZURE_SUBSCRIPTION_ID','AZURE_SIGNING_ENDPOINT','AZURE_SIGNING_ACCOUNT','AZURE_SIGNING_PROFILE')) {
+            if (-not [Environment]::GetEnvironmentVariable($name)) { throw "Configure signing environment variable: $name" }
+          }
+      - uses: azure/login@v2
+        if: runner.os == 'Windows'
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - uses: actions/setup-dotnet@v4
+        if: runner.os == 'Windows'
+        with:
+          dotnet-version: '8.0.x'
+      - name: Prepare Windows signing tools
+        if: runner.os == 'Windows'
+        env:
+          AZURE_SIGNING_ENDPOINT: ${{ vars.AZURE_SIGNING_ENDPOINT }}
+          AZURE_SIGNING_ACCOUNT: ${{ vars.AZURE_SIGNING_ACCOUNT }}
+          AZURE_SIGNING_PROFILE: ${{ vars.AZURE_SIGNING_PROFILE }}
+        shell: pwsh
+        run: ./packaging/windows/prepare-signing.ps1
+      - name: Compile and sign Windows installer and embedded uninstaller
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $compiler)) { choco install innosetup --yes --no-progress; if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed' } }
+          $version = (Get-Content -Raw PrintableThreads/PrintableThreads.manifest | ConvertFrom-Json -AsHashtable).version
+          $script = (Resolve-Path packaging/windows/sign-azure.ps1).Path
+          $command = '/Sazure=powershell.exe -NoProfile -ExecutionPolicy Bypass -File $q' + $script + '$q $f'
+          & $compiler "/DVersion=$version" /DSignedBuild=1 $command packaging/windows/PrintableThreads.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Signed compilation failed' }
+      - name: Check signed Windows installer, uninstaller and upgrade
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./packaging/windows/test-install.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signed-${{ runner.os }}
+          path: |
+            dist/PrintableThreads-*-macOS.pkg
+            dist/PrintableThreads-*-Windows.exe
+          if-no-files-found: error
+  publish:
+    needs: sign
+    environment: signing
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: signed-*
+          merge-multiple: true
+          path: signed
+      - name: Add verified signed downloads and checksums to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release view "$RELEASE_TAG" --json tagName
+          cd signed
+          sha256sum *.pkg *.exe > SHA256SUMS-SIGNED.txt
+          gh release upload "$RELEASE_TAG" ./* --clobber
+          gh release view "$RELEASE_TAG" --json body --jq .body > notes.md
+          python -c 'import os,pathlib; p=pathlib.Path("notes.md"); marker="<!-- verified-signed-downloads -->"; s=p.read_text(); tag=os.environ["RELEASE_TAG"]; v=tag[1:]; s=s.split(marker)[0].rstrip(); p.write_text(s+"\n\n"+marker+"\n## Verified signed installers\n\nThe additional `PrintableThreads-"+v+"-macOS.pkg` is signed and notarized. `PrintableThreads-"+v+"-Windows.exe` includes a signed installer and uninstaller. Use these downloads for easier distribution. Files with `unsigned` in their names remain the original preview fallback. Integrity hashes: `SHA256SUMS-SIGNED.txt`.\n")'
+          gh release edit "$RELEASE_TAG" --notes-file notes.md

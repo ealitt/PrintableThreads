@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 dist/
+*.p12
+*.pfx
+*.p8
+*.keychain-db

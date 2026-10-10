@@ -1,6 +1,9 @@
 $ErrorActionPreference = 'Stop'
 $version = (Get-Content -Raw 'PrintableThreads/PrintableThreads.manifest' | ConvertFrom-Json -AsHashtable).version
-$installer = (Resolve-Path "dist/PrintableThreads-$version-Windows-unsigned.exe").Path
+$signedInstaller = "dist/PrintableThreads-$version-Windows.exe"
+$signedBuild = Test-Path $signedInstaller
+$installer = if ($signedBuild) { (Resolve-Path $signedInstaller).Path } else { (Resolve-Path "dist/PrintableThreads-$version-Windows-unsigned.exe").Path }
+if ($signedBuild -and (Get-AuthenticodeSignature $installer).Status -ne 'Valid') { throw 'Installer signature is not trusted' }
 $root = Join-Path $env:RUNNER_TEMP 'Printable Threads installer test'
 $target = Join-Path $root 'API/AddIns/PrintableThreads'
 New-Item -ItemType Directory -Force $root | Out-Null
@@ -23,6 +26,7 @@ Install-Preview
 $backupRoot = Join-Path $root 'API/PrintableThreads-backups'
 if (-not (Get-ChildItem $backupRoot -Recurse -Filter old-version.txt)) { throw 'Old install was not preserved' }
 $uninstaller = Join-Path $target 'unins000.exe'
+if ($signedBuild -and (Get-AuthenticodeSignature $uninstaller).Status -ne 'Valid') { throw 'Embedded uninstaller signature is not trusted' }
 $process = Start-Process $uninstaller -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART' -Wait -PassThru
 if ($process.ExitCode -ne 0) { throw 'Uninstaller failed' }
 if (Test-Path (Join-Path $target 'PrintableThreads.manifest')) { throw 'Add-in remains after uninstall' }

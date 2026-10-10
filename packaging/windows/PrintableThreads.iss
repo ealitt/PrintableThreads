@@ -13,12 +13,20 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 UsePreviousAppDir=no
 OutputDir=..\..\dist
+#ifdef SignedBuild
+OutputBaseFilename=PrintableThreads-{#Version}-Windows
+SignTool=azure
+SignedUninstaller=yes
+SignedUninstallerDir=..\..\dist\signed-uninstaller
+InfoBeforeFile=..\INSTALL-SIGNED.txt
+#else
 OutputBaseFilename=PrintableThreads-{#Version}-Windows-unsigned
+InfoBeforeFile=..\INSTALL.txt
+#endif
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 SetupLogging=yes
-InfoBeforeFile=..\INSTALL.txt
 InfoAfterFile=..\ACTIVATE.txt
 UninstallDisplayName=Printable Threads for Autodesk Fusion
 CloseApplications=no

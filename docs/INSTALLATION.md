@@ -69,6 +69,9 @@ Do not merge folders: stale source files can remain from an older release.
 
 ## Distribution options
 
+Automated signing is prepared in the separate signing workflow but cannot run until
+publisher accounts and credentials exist. See [signing setup](SIGNING-SETUP.md).
+
 | Route | What is available / what remains |
 |---|---|
 | GitHub native installers | Included with this release: PKG, EXE, ZIP, checksums. No marketplace requirement. Private repository access is required until the owner changes visibility. |

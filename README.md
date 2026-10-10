@@ -16,6 +16,10 @@ Close Fusion, double-click your installer, then reopen Fusion. Open **Design →
 
 These engineering-preview installers are **unsigned**, and the Mac package is **not notarized**. OS security prompts or blocks are possible. The repository is currently private and requires GitHub access. See the [installation guide](docs/INSTALLATION.md) for security prompts, the manual ZIP method, uninstalling, signing and Autodesk App Store options.
 
+An automated signing workflow is now available, but publisher accounts and credentials
+are not configured yet. See [one-time signing setup](docs/SIGNING-SETUP.md). Current
+release files keep their unsigned labels until real platform verification succeeds.
+
 ## Commands
 
 **Create Printable Thread** generates a screw, female member, or matched pair as separate components. The main dialog follows Fusion's Coil workflow and starts with five main values:
