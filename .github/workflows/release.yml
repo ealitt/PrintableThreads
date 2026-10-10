@@ -37,7 +37,7 @@ jobs:
         run: |
           $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $compiler)) { choco install innosetup --yes --no-progress; if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed' } }
-          $version = (Get-Content PrintableThreads/PrintableThreads.manifest | ConvertFrom-Json).version
+          $version = (Get-Content -Raw PrintableThreads/PrintableThreads.manifest | ConvertFrom-Json -AsHashtable).version
           & $compiler "/DVersion=$version" packaging/windows/PrintableThreads.iss
           if ($LASTEXITCODE -ne 0) { throw 'Inno Setup compilation failed' }
       - name: Test Windows install, upgrade and uninstall

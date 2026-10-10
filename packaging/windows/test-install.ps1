@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$version = (Get-Content 'PrintableThreads/PrintableThreads.manifest' | ConvertFrom-Json).version
+$version = (Get-Content -Raw 'PrintableThreads/PrintableThreads.manifest' | ConvertFrom-Json -AsHashtable).version
 $installer = (Resolve-Path "dist/PrintableThreads-$version-Windows-unsigned.exe").Path
 $root = Join-Path $env:RUNNER_TEMP 'Printable Threads installer test'
 $target = Join-Path $root 'API/AddIns/PrintableThreads'
