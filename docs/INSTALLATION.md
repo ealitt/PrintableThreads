@@ -16,6 +16,8 @@ this release, Apple's supported exception is **System Settings → Privacy & Sec
 Open Anyway**, after attempting to open the package. Do not disable Gatekeeper globally.
 See [Apple's instructions](https://support.apple.com/en-us/102445).
 Corporate security policies can prevent exceptions; use an approved deployment method instead.
+For the single-file `xattr -d com.apple.quarantine` command and verification steps, see
+[Mac installer blocked in the README](../README.md#mac-installer-blocked).
 
 ## Windows
 
@@ -26,7 +28,10 @@ Corporate security policies can prevent exceptions; use an approved deployment m
 
 This preview installer is **unsigned**. Windows may show an unknown-publisher or
 SmartScreen warning, and Smart App Control or organizational policies may block it.
-Only proceed if you trust the release; do not turn off system protections.
+Only proceed if you trust the release; do not turn off system protections. See
+[Windows Unblock and SmartScreen instructions](../README.md#windows-installer-blocked)
+and [Defender quarantine troubleshooting](../README.md#windows-defender-quarantine-or-malware-detection)
+in the README.
 
 ## If the menu does not appear
 

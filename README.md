@@ -2,6 +2,19 @@
 
 A dependency-free Python add-in for modeled FDM threads: circular On Center and rounded trapezoidal profiles, 1–4 starts, left/right hand, knob screws, matching nuts/blind caps, cylindrical-face application, and fit coupons. Dimensions are entered with Fusion's native unit-aware controls.
 
+## Index
+
+- [Download and install](#download-and-install)
+- [Mac installer blocked: quarantine command and Open Anyway](#mac-installer-blocked)
+- [Windows installer blocked: Unblock and SmartScreen](#windows-installer-blocked)
+- [Windows Defender quarantine or malware detection](#windows-defender-quarantine-or-malware-detection)
+- [Tool commands and parameters](#commands)
+- [Printing and dimensions](#printing-and-dimensions)
+- [Release scope](#release-scope)
+- [Development](#development)
+- [Native validation](#native-validation)
+- [Signing setup](docs/SIGNING-SETUP.md)
+
 ## Download and install
 
 Download the [0.5.2 release](https://github.com/ealitt/PrintableThreads/releases/tag/v0.5.2):
@@ -19,6 +32,79 @@ These engineering-preview installers are **unsigned**, and the Mac package is **
 An automated signing workflow is now available, but publisher accounts and credentials
 are not configured yet. See [one-time signing setup](docs/SIGNING-SETUP.md). Current
 release files keep their unsigned labels until real platform verification succeeds.
+
+### Mac installer blocked
+
+For the unsigned **0.5.2** package downloaded into your **Downloads** folder, open
+**Terminal** and remove only its quarantine attribute:
+
+```sh
+xattr -d com.apple.quarantine ~/Downloads/PrintableThreads-0.5.2-macOS-unsigned.pkg
+```
+
+Then open the installer:
+
+```sh
+open ~/Downloads/PrintableThreads-0.5.2-macOS-unsigned.pkg
+```
+
+Optionally check the remaining attributes:
+
+```sh
+xattr -l ~/Downloads/PrintableThreads-0.5.2-macOS-unsigned.pkg
+```
+
+If `com.apple.quarantine` is absent, it has been removed. An error saying that the
+attribute does not exist means it was already absent. Change the path if you saved
+the package elsewhere or downloaded another version. Use `xattr -d` instead of
+`xattr -c`: `-d` removes just the named attribute; `-c` clears all extended attributes.
+No `sudo` or recursive removal is needed for this downloaded package.
+
+This removes the downloaded-file quarantine marker; it does **not** sign, notarize
+or scan the installer. Use it only for a release you trust. Other security checks or
+managed-device policies can still block installation.
+
+**Without Terminal:** double-click the package, dismiss the warning, then open
+**System Settings → Privacy & Security → Security → Open Anyway**. Authenticate and
+confirm, then follow the installer. This is [Apple's supported per-file exception](https://support.apple.com/en-us/102445).
+
+### Windows installer blocked
+
+Windows can attach a **Mark of the Web** (`Zone.Identifier`) to downloaded files.
+Its closest equivalent to the Mac command is **Unblock-File**. After checking that
+you trust the download, open **PowerShell** and run:
+
+```powershell
+Unblock-File -LiteralPath "$env:USERPROFILE\Downloads\PrintableThreads-0.5.2-Windows-unsigned.exe"
+```
+
+Then double-click the installer in Downloads. If you saved it elsewhere, change the
+path. No administrator PowerShell session is normally needed for your own download.
+
+**Without PowerShell:** right-click the `.exe` in File Explorer → **Properties →
+General**, select **Unblock** if shown, then **Apply → OK**. Microsoft's
+[Unblock-File reference](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/unblock-file)
+confirms that this removes the download marker and performs the same action as that checkbox.
+
+For an **unrecognized-app** SmartScreen warning such as **Windows protected your PC**,
+**More info → Run anyway** may be available for a download you trust. See
+[Microsoft's installer guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/publish-first-app).
+Unblocking does not add a signature or override Defender antivirus, Smart App Control,
+or organizational policy; some blocks offer no per-file exception.
+
+### Windows Defender quarantine or malware detection
+
+A Defender antivirus detection is different from an unsigned/unknown-publisher
+warning. If the installer disappears or Defender reports a threat, open **Windows
+Security → Virus & threat protection → Protection history** and expand the matching
+entry to see the detected threat, affected file and action taken.
+
+`Unblock-File` does not restore a quarantined file. Do not assume a detection is a
+false positive merely because this installer is unsigned. If it appears incorrect,
+record the detection name and file hash and report it to the publisher for review.
+Microsoft's [Protection History guide](https://support.microsoft.com/en-us/windows/security/windows-security/protection-history-in-the-windows-security-app)
+explains quarantine and restore actions; restoration can cause the file to be detected
+again. Avoid disabling antivirus or adding broad folder exclusions to install the add-in.
 
 ## Commands
 
