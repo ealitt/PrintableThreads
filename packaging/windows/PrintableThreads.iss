@@ -42,7 +42,7 @@ begin
       BackupRoot := ExtractFileDir(ExtractFileDir(Target)) + '\PrintableThreads-backups';
       if not ForceDirectories(BackupRoot) then
         begin Result := 'Could not create backup folder. Installation stopped.'; Exit; end;
-      BackupPath := BackupRoot + '\' + GetDateTimeString('yyyymmdd-hhnnss-zzz', '', '');
+      BackupPath := BackupRoot + '\' + GetDateTimeString('yyyymmdd-hhnnss-zzz', '-', ':');
       if DirExists(BackupPath) then
         begin Result := 'Backup already exists. Please try again in a moment.'; BackupPath := ''; Exit; end;
       if not RenameFile(Target, BackupPath) then

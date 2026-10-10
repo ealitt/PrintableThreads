@@ -17,6 +17,14 @@ class MacInstallerTests(unittest.TestCase):
                                str(source), str(home), 'unused-nonroot-test-user'],
                               capture_output=True, text=True, check=check)
 
+    def test_fresh_install(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            self.run_install(ROOT / 'PrintableThreads', home)
+            api = home / 'Library/Application Support/Autodesk/Autodesk Fusion 360/API'
+            self.assertTrue((api / 'AddIns/PrintableThreads/PrintableThreads.manifest').exists())
+            self.assertFalse((api / 'PrintableThreads-backups').exists())
+
     def test_install_upgrade_and_settings(self):
         with tempfile.TemporaryDirectory(prefix='Printable Threads test ') as temporary:
             home = Path(temporary)
