@@ -30,24 +30,30 @@ var
   BackupPath: String;
   Completed: Boolean;
 
-procedure CurStepChanged(CurStep: TSetupStep);
+function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   Target, BackupRoot: String;
 begin
-  if CurStep = ssInstall then begin
+  Result := '';
+  { Back up before Inno opens its uninstall log in the target directory. }
+  if BackupPath = '' then begin
     Target := ExpandConstant('{app}');
     if DirExists(Target) then begin
       BackupRoot := ExtractFileDir(ExtractFileDir(Target)) + '\PrintableThreads-backups';
       if not ForceDirectories(BackupRoot) then
-        RaiseException('Could not create backup folder. Installation stopped.');
+        begin Result := 'Could not create backup folder. Installation stopped.'; Exit; end;
       BackupPath := BackupRoot + '\' + GetDateTimeString('yyyymmdd-hhnnss-zzz', '', '');
       if DirExists(BackupPath) then
-        RaiseException('Backup already exists. Please try again in a moment.');
+        begin Result := 'Backup already exists. Please try again in a moment.'; BackupPath := ''; Exit; end;
       if not RenameFile(Target, BackupPath) then
-        RaiseException('Could not back up the installed version. Close Fusion and try again.');
+        begin Result := 'Could not back up the installed version. Close Fusion and try again.'; BackupPath := ''; Exit; end;
       Log('Previous installation saved in ' + BackupPath);
     end;
   end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
   if CurStep = ssPostInstall then Completed := True;
 end;
 

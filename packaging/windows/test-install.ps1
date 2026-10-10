@@ -7,7 +7,10 @@ New-Item -ItemType Directory -Force $target | Out-Null
 Set-Content (Join-Path $target 'old-version.txt') 'keep backup'
 function Install-Preview {
     $process = Start-Process -FilePath $installer -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=`"$target`" /LOG=`"$root/install.log`"" -Wait -PassThru
-    if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+    if ($process.ExitCode -ne 0) {
+        Get-Content (Join-Path $root 'install.log') -Tail 60
+        throw "Installer failed: $($process.ExitCode)"
+    }
 }
 Install-Preview
 $backupRoot = Join-Path $root 'API/PrintableThreads-backups'
