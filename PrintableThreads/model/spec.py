@@ -60,7 +60,12 @@ class Spec:
             raise ValueError('Starts must be an integer from 1 to 4.')
         if not 4 <= self.root_diameter <= 100: raise ValueError('Root diameter must be 4–100 mm.')
         if not 0.8 <= self.pitch <= 12: raise ValueError('Pitch must be 0.8–12 mm.')
-        if not 0.25 <= self.height <= min(4, self.root_diameter / 4): raise ValueError('Thread height is outside the supported range.')
+        if not 0.25 <= self.height <= 4:
+            raise ValueError(f'Section size must be {0.5 if self.section=="Circular" else 0.25:g}–{8 if self.section=="Circular" else 4:g} mm; got {self.thread_size:g} mm.')
+        # Circular sections sit on the nominal radius. The previous D/4 limit
+        # rejected valid short coils; the kernel needs a positive inner radius.
+        if self.height >= self.root_diameter/2:
+            raise ValueError(f'Section size ({self.thread_size:g} mm) reaches the axis of the {self.root_diameter:g} mm cylinder. Reduce Section size below {self.root_diameter if self.section=="Circular" else self.root_diameter/2:g} mm.')
         if type(self.cut_screw) is not bool or type(self.print_on_plate) is not bool: raise ValueError('Thread direction and print placement must be boolean.')
         if self.cut_screw and min(self.width,self.crest if self.section!='Circular' else self.width)<=2*self.axial_clearance:
             raise ValueError('Flank clearance is too large for the joined nut section.')

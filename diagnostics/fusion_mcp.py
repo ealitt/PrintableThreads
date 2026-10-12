@@ -1,6 +1,6 @@
 """Development client for the user-enabled local Fusion MCP server."""
-import json,sys,urllib.request
-URL='http://127.0.0.1:27182/mcp'
+import json,sys,urllib.request,os
+URL=os.environ.get('FUSION_MCP_URL','http://127.0.0.1:27182/mcp')
 
 def post(payload,session=None):
     headers={'Content-Type':'application/json','Accept':'application/json, text/event-stream'}

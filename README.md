@@ -17,11 +17,11 @@ A dependency-free Python add-in for modeled FDM threads: circular On Center and 
 
 ## Download and install
 
-Download the [0.5.2 release](https://github.com/ealitt/PrintableThreads/releases/tag/v0.5.2):
+Download the [0.5.3 release](https://github.com/ealitt/PrintableThreads/releases/tag/v0.5.3):
 
-- **[macOS installer (.pkg)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.2/PrintableThreads-0.5.2-macOS-unsigned.pkg)**
-- **[Windows installer (.exe)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.2/PrintableThreads-0.5.2-Windows-unsigned.exe)**
-- **[ZIP fallback](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.2/PrintableThreads-0.5.2.zip)**
+- **[macOS installer (.pkg)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.3/PrintableThreads-0.5.3-macOS-unsigned.pkg)**
+- **[Windows installer (.exe)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.3/PrintableThreads-0.5.3-Windows-unsigned.exe)**
+- **[ZIP fallback](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.3/PrintableThreads-0.5.3.zip)**
 
 Close Fusion, double-click your installer, then reopen Fusion. Open **Design → Solid → Create → Printable Threads** at the bottom of Create. If missing, press **Shift+S → Add-Ins → PrintableThreads → Run**, then enable **Run on Startup**. Fresh installs default to startup enabled; upgrades can retain Fusion's prior preference.
 
@@ -35,23 +35,23 @@ release files keep their unsigned labels until real platform verification succee
 
 ### Mac installer blocked
 
-For the unsigned **0.5.2** package downloaded into your **Downloads** folder, open
+For the unsigned **0.5.3** package downloaded into your **Downloads** folder, open
 **Terminal** and remove only its quarantine attribute:
 
 ```sh
-xattr -d com.apple.quarantine ~/Downloads/PrintableThreads-0.5.2-macOS-unsigned.pkg
+xattr -d com.apple.quarantine ~/Downloads/PrintableThreads-0.5.3-macOS-unsigned.pkg
 ```
 
 Then open the installer:
 
 ```sh
-open ~/Downloads/PrintableThreads-0.5.2-macOS-unsigned.pkg
+open ~/Downloads/PrintableThreads-0.5.3-macOS-unsigned.pkg
 ```
 
 Optionally check the remaining attributes:
 
 ```sh
-xattr -l ~/Downloads/PrintableThreads-0.5.2-macOS-unsigned.pkg
+xattr -l ~/Downloads/PrintableThreads-0.5.3-macOS-unsigned.pkg
 ```
 
 If `com.apple.quarantine` is absent, it has been removed. An error saying that the
@@ -75,7 +75,7 @@ Its closest equivalent to the Mac command is **Unblock-File**. After checking th
 you trust the download, open **PowerShell** and run:
 
 ```powershell
-Unblock-File -LiteralPath "$env:USERPROFILE\Downloads\PrintableThreads-0.5.2-Windows-unsigned.exe"
+Unblock-File -LiteralPath "$env:USERPROFILE\Downloads\PrintableThreads-0.5.3-Windows-unsigned.exe"
 ```
 
 Then double-click the installer in Downloads. If you saved it elsewhere, change the
@@ -135,7 +135,9 @@ The construction component’s local Z remains its screw axis; positions use the
 
 Fusion's current New Document command creates an empty Part design, which cannot contain the separate components used by this add-in. Printable Threads promotes a completely empty Part document to Hybrid design intent when you click OK. Opening and cancelling the dialog leaves the document unchanged. Create and Apply can also promote populated Part documents on OK. Fit Test requires Hybrid or Assembly intent for populated Part documents.
 
-**Apply Printable Thread** accepts a full cylindrical face bounded by two circular end edges. Partial and interrupted cylinders are not supported. By default, external faces receive cut grooves and internal faces receive joined ribs; **Swap cut / join** reverses those operations. The selected cylinder supplies diameter, axis, and available length. Reverse axis changes which end starts the interval. Only the selected body participates in the native Combine. Apply can promote Part design intent to Hybrid on OK and retains its selected target through this transition. No contour masks or Thicken features are created. Knobs and entry taper are disabled for Apply. Repeated occurrences share the native body, so applying to one updates all occurrences of that component.
+**Apply Printable Thread** accepts one or more cylindrical or circular drafted faces on the same solid body and occurrence. Faces must share a rotational surface and a continuous axial span; planar faces, mismatched diameters/tapers, separate bodies and unrelated axes receive specific errors. Partial cylinders, mold slots, and oblique ends are supported. The thread has a common axis and phase across the cut. Joined ribs are trimmed against an expanded copy of the selected part so planar cut boundaries stay empty; all resulting fragments are retained. Drafted parts use a straight reference thread at the largest outside diameter or smallest bore diameter, and excessive draft for the section size is rejected. This creates a straight mating thread, not a tapered fastener.
+
+Select all faces, then enable **Solid Preview** to inspect a shaded result with visible solid edges and without Fusion's blue selection overlay. Disable it to change the selection. The preview uses a kernel sweep and solid booleans; native normal-clearance finishing and optional edge chamfers can differ slightly. Cancel restores visibility and removes temporary features. Part previews preserve Part design intent. Apply promotes Part to Hybrid on OK for editable native construction. Reverse axis chooses the opposite axial bound. Only the selected body participates in the final Combine; split results are preserved. Knobs and entry taper are disabled. Repeated occurrences share the native body, so applying to one updates all occurrences of that component.
 
 Create, Apply, and Fit Test can insert features at the current timeline marker, including in the middle of the history. Apply uses the selected cylinder as it exists at that point; later features recompute through Fusion. Opening or cancelling the dialog does not move the marker.
 
@@ -172,7 +174,7 @@ Existing operations remain unchanged. Balanced/Custom, Fit Test, and legacy Edit
 
 ## Release scope
 
-This is a **0.5.2 engineering preview**, not a standardized fastener or commercial bottle-thread library. Implemented: circular On Center, rounded trapezoid (radius zero gives sharp trapezoid), axial/radial fit controls, end trimming, standalone entry easing, lobed/cylindrical knobs, independent engagement, caps, multistart, handedness, responsive Custom Graphics preview, basic owned regeneration and cylindrical application.
+This is a **0.5.3 engineering preview**, not a standardized fastener or commercial bottle-thread library. Implemented: circular On Center, rounded trapezoid (radius zero gives sharp trapezoid), axial/radial fit controls, end trimming, standalone entry easing, lobed/cylindrical knobs, independent engagement, caps, multistart, handedness, responsive Custom Graphics preview, basic owned regeneration and cylindrical application.
 
 Deferred from the outline: triangle profile families, separate crest/root radius controls, native conversion of the advanced trapezoidal profiles, shoulder relief/runout, knob edge fillets, hex blanks, standalone face/center placement, manipulators, turns-driven UI, advanced external cut-groove mode, associative legacy regeneration, an add-in dialog for editing native thread groups and custom timeline features. Unsupported selections fail with an explanation. See [validation evidence and outstanding checks](docs/TEST-RESULTS.md).
 
@@ -191,3 +193,6 @@ A minimal original F3D template supplies the native editable Coil because [Fusio
 0.5.1 adds native circular thread-land chamfers, main-input Starts, and +Y placement from ZX. See [print-finish validation](docs/PRINT-FINISH-0.5.1.md).
 
 0.5.2 consolidates the lobed knob into one sketch and one joining extrusion, simplifies nut blanks and the entry taper, and removes redundant cutting-tool trims. The default native pair falls from 73 to 34 timeline entries; 12-lobe pairs fall from 97 to 34. See [optimization evidence](docs/OPTIMIZATION-0.5.2.md).
+
+
+0.5.3 fixes section-size validation on short threads, reports axis/pitch/draft limits explicitly, adds multiple-face interrupted/drafted Apply, and adds solid inspection previews. The 3.65 mm regression uses a 4 mm cylinder, 5 mm pitch and 3 mm circular section. A 4 mm section on that cylinder reaches the axis and is rejected with that explanation. See [Fusion geometry regression](docs/short-interrupted-probe.json), [real command commit](docs/solid-preview-command.json), and [solid preview](docs/solid-preview.png).

@@ -76,4 +76,4 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           python packaging/build.py --checksums-only
-          gh release create "$RELEASE_TAG" dist/* --verify-tag --prerelease --title "Printable Threads $RELEASE_TAG" --notes-file docs/RELEASE-0.5.2.md
+          gh release create "$RELEASE_TAG" dist/* --verify-tag --prerelease --title "Printable Threads $RELEASE_TAG" --notes-file "docs/RELEASE-${RELEASE_TAG#v}.md"

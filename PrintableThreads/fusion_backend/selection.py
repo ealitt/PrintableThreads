@@ -6,30 +6,147 @@ import adsk.fusion as fusion
 from ..geometry import backend as b
 from ..model.solid import validate_applied
 
+def selected_faces(selected):
+    return list(selected) if isinstance(selected,(tuple,list)) else [selected]
+
 def cylinder_frame(selected,reverse=False):
-    face=selected.nativeObject or selected
-    cylinder=core.Cylinder.cast(face.geometry)
-    if not cylinder or not face.body.isSolid: raise ValueError('Select a circular cylindrical face on a solid body.')
-    circles=[]
-    for edge in face.edges:
-        circle=core.Circle3D.cast(edge.geometry)
-        if circle:circles.append(circle)
-    if len(circles)!=2 or any(abs(v.radius-cylinder.radius)>1e-5 for v in circles):
-        raise ValueError('Select a full cylindrical face bounded by two circular ends. Partial and interrupted cylinders are not supported.')
-    z=cylinder.axis.copy();z.normalize()
-    centers=sorted((v.center for v in circles),key=lambda p:cylinder.origin.vectorTo(p).dotProduct(z))
-    origin=centers[1] if reverse else centers[0]
-    length=centers[0].distanceTo(centers[1])*10
+    selected=selected_faces(selected)
+    faces=[item.nativeObject or item for item in selected]
+    face=faces[0];surface=core.Cylinder.cast(face.geometry) or core.Cone.cast(face.geometry)
+    if not surface or not face.body.isSolid:
+        raise ValueError('Select cylindrical or circular drafted faces on a solid body.')
+    z=surface.axis.copy();z.normalize()
+    points=[];intervals=[];internal=None
+    context=selected[0].assemblyContext
+    for item,f in zip(selected,faces):
+        other=core.Cylinder.cast(f.geometry) or core.Cone.cast(f.geometry)
+        if not other:raise ValueError('Every selected face must be cylindrical or circular drafted.')
+        if f.body!=face.body or item.assemblyContext!=context:
+            raise ValueError('Select faces on the same body and component occurrence.')
+        axis=other.axis.copy();axis.normalize()
+        delta=surface.origin.vectorTo(other.origin);cross=delta.crossProduct(z)
+        if abs(abs(axis.dotProduct(z))-1)>1e-7 or cross.length>1e-5:
+            raise ValueError('Selected faces must share one circular axis.')
+        if core.Cylinder.cast(other) and core.Cylinder.cast(surface) and abs(other.radius-surface.radius)>1e-5:
+            raise ValueError('Selected cylindrical faces must have the same diameter.')
+        p=f.pointOnFace;offset=surface.origin.vectorTo(p)
+        axial=z.copy();axial.scaleBy(offset.dotProduct(z));radial=offset.copy();radial.subtract(axial)
+        ok,normal=f.evaluator.getNormalAtPoint(p)
+        if not ok:raise ValueError('Cannot evaluate the selected face normal.')
+        inward=normal.dotProduct(radial)<0
+        if internal is not None and inward!=internal:raise ValueError('Cannot mix bore and outside faces.')
+        internal=inward
+        face_points=[]
+        for edge in f.edges:
+            evaluator=edge.evaluator
+            ok,a,bound=evaluator.getParameterExtents()
+            if not ok:raise ValueError('Cannot evaluate the selected face boundary.')
+            ok,samples=evaluator.getStrokes(a,bound,1e-5)
+            if not ok:raise ValueError('Cannot measure the selected face boundary.')
+            face_points.extend(samples)
+        points.extend(face_points)
+        axial_values=[surface.origin.vectorTo(p).dotProduct(z) for p in face_points]
+        intervals.append((min(axial_values),max(axial_values)))
+    if not points:raise ValueError('Selected faces have no measurable boundaries.')
+    projections=[surface.origin.vectorTo(p).dotProduct(z) for p in points]
+    low,high=min(projections),max(projections)
+    covered=low
+    for start,end in sorted(intervals):
+        if start>covered+2e-5:raise ValueError('Selected faces have an axial gap. Select the intervening faces too.')
+        covered=max(covered,end)
+    if high-low<1e-6:raise ValueError('Selected faces have no axial length.')
+    # Verify all faces belong to the same rotational surface, including cones.
+    radii=[]
+    for p,t in zip(points,projections):
+        delta=surface.origin.vectorTo(p);axial=z.copy();axial.scaleBy(t);delta.subtract(axial)
+        radii.append(delta.length)
+    if core.Cylinder.cast(surface):
+        radius=surface.radius
+        if any(abs(r-radius)>2e-5 for r in radii):raise ValueError('Selected faces do not share one cylindrical surface.')
+    else:
+        # Constant-diameter envelope at the widest outside / narrowest bore end.
+        # This makes a straight mating thread on a drafted mold, not a tapered fastener.
+        lo=min(zip(projections,radii));hi=max(zip(projections,radii))
+        slope=(hi[1]-lo[1])/(hi[0]-lo[0])
+        if any(abs(r-(lo[1]+slope*(t-lo[0])))>2e-5 for t,r in zip(projections,radii)):
+            raise ValueError('Selected drafted faces must share the same taper and circular surface.')
+        radius=min(radii) if internal else max(radii)
+        if max(radii)-min(radii)>=radius*.5:
+            raise ValueError('Draft is too large for a straight reference thread.')
+    origin=surface.origin.copy();shift=z.copy();shift.scaleBy(high if reverse else low);origin.translateBy(shift)
     if reverse:z.scaleBy(-1)
     reference=core.Vector3D.create(1,0,0) if abs(z.x)<.9 else core.Vector3D.create(0,1,0)
     y=z.crossProduct(reference);y.normalize();x=y.crossProduct(z);x.normalize()
     m=core.Matrix3D.create();m.setWithCoordinateSystem(origin,x,y,z)
-    p=face.pointOnFace;offset=cylinder.origin.vectorTo(p)
-    axial=z.copy();axial.scaleBy(offset.dotProduct(z));radial=offset.copy();radial.subtract(axial)
-    ok,normal=face.evaluator.getNormalAtPoint(p)
-    if not ok:raise ValueError('Cannot evaluate cylinder normal.')
-    internal=normal.dotProduct(radial)<0
-    return face, m, cylinder.radius*20, length, internal
+    return face,m,radius*20,(high-low)*10,internal
+
+def validate_draft(selected,spec):
+    radii=[]
+    for selected_face in selected_faces(selected):
+        face=selected_face.nativeObject or selected_face
+        cone=core.Cone.cast(face.geometry)
+        if not cone:continue
+        axis=cone.axis.copy();axis.normalize()
+        for edge in face.edges:
+            ok,a,bound=edge.evaluator.getParameterExtents()
+            if not ok:raise ValueError('Cannot measure draft.')
+            ok,points=edge.evaluator.getStrokes(a,bound,1e-5)
+            if not ok:raise ValueError('Cannot measure draft.')
+            for p in points:
+                delta=cone.origin.vectorTo(p);along=axis.copy();along.scaleBy(delta.dotProduct(axis));delta.subtract(along)
+                radii.append(delta.length*10)
+    if radii:
+        variation=max(radii)-min(radii)
+        if spec.height<=variation+spec.radial_clearance+1e-5:
+            raise ValueError(f'Section size cannot reach the full draft ({variation:g} mm radius change). Increase section radial reach beyond {variation+spec.radial_clearance:g} mm or reduce draft/tolerance.')
+
+def expanded_reference(design,selected,distance):
+    """Offset only selected rotational faces; planar cut boundaries stay fixed.
+
+    The reference exists only in a scratch component and is always removed.
+    """
+    selected=selected_faces(selected);face=selected[0].nativeObject or selected[0]
+    indices=[i for i,f in enumerate(face.body.faces) if any(f==(item.nativeObject or item) for item in selected)]
+    scratch,c,start=b.scratch_component(design.rootComponent)
+    try:
+        base=b.persist(c,[b.manager().copy(face.body)],'Temporary thread boundary reference')
+        body=base.bodies.item(0)
+        faces=[body.faces.item(i).createForAssemblyContext(scratch) if scratch else body.faces.item(i) for i in indices]
+        inp=c.features.offsetFacesFeatures.createInput(faces,core.ValueInput.createByReal(distance/10))
+        feature=c.features.offsetFacesFeatures.add(inp)
+        return b.manager().copy(feature.bodies.item(0).nativeObject or feature.bodies.item(0))
+    finally:
+        b.remove_scratch(scratch,start)
+
+def preview_body(design,selected,spec,reverse=False):
+    face,frame,diameter,available,internal=cylinder_frame(selected,reverse)
+    if spec.length>available+1e-5:raise ValueError(f'Thread length exceeds the {available:g} mm axial span.')
+    validate_draft(selected,spec)
+    # Same nominal helix and boolean as Apply. Native normal offsets and optional
+    # edge chamfers are finishing operations, so remain excluded from this preview.
+    shown=spec
+    if internal:
+        shown=replace(spec,root_diameter=diameter+2*spec.radial_clearance)
+        if spec.section!='Circular':shown=spec.nut_rib() if spec.cut_screw else spec.cutter(length=spec.length)
+        elif spec.radial_clearance:
+            size=spec.thread_size+(-2 if spec.cut_screw else 2)*spec.radial_clearance
+            shown=shown.with_circular_section(size)
+    tool=b.sweep_rib(design.rootComponent,shown,inward=spec.cut_screw)
+    if spec.left_hand:
+        reflection=b.M();reflection.setCell(1,1,-1);b.transform(tool,reflection)
+    b.rotate(tool,math.radians(spec.phase))
+    b.intersect(tool,b.cylinder(shown.root_diameter/2+shown.height+1,0,spec.length))
+    candidate=b.manager().copy(face.body)
+    joining=internal==spec.cut_screw
+    if internal and spec.radial_clearance:
+        # Negative normal offset grows a bore, including its draft.
+        candidate=expanded_reference(design,selected,-spec.radial_clearance)
+    envelope=expanded_reference(design,selected,spec.height) if joining else None
+    for i in range(spec.starts):
+        rib=b.rotate(b.manager().copy(tool),2*math.pi*i/spec.starts);b.transform(rib,frame)
+        if joining:b.intersect(rib,b.manager().copy(envelope))
+        (b.union if joining else b.cut)(candidate,rib)
+    return validate_applied(candidate,face.body.lumps.count,joining)
 
 def apply(design,selected,spec,reverse=False):
     face,m,diameter,available,internal=cylinder_frame(selected,reverse)
@@ -50,7 +167,10 @@ def apply(design,selected,spec,reverse=False):
         # Multiple disconnected ribs cannot be unioned until joined to the target.
         tools=[b.rotate(b.manager().copy(tool),2*math.pi*i/spec.starts) for i in range(spec.starts)]
     if internal and not spec.cut_screw: tools=[tool]
-    for tool in tools:b.transform(tool,m)
+    envelope=expanded_reference(design,selected,spec.height) if internal==spec.cut_screw else None
+    for tool in tools:
+        b.transform(tool,m)
+        if envelope:b.intersect(tool,b.manager().copy(envelope))
     candidate=b.manager().copy(target)
     for tool in tools:
         (b.cut if internal != spec.cut_screw else b.union)(candidate,tool)

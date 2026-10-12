@@ -3,7 +3,7 @@ import math
 from pathlib import Path
 import adsk.core as core
 import adsk.fusion as fusion
-from .selection import cylinder_frame
+from .selection import cylinder_frame,selected_faces,validate_draft
 from ..geometry import backend as b
 
 P=core.Point3D.create
@@ -125,10 +125,11 @@ class Builder:
         annulus=next(profile for profile in sk.profiles if profile.profileLoops.count==2)
         return self.extrude(c,sk,length,'Extrude nut annulus',profiles=annulus)
 
-    def combine(self,c,target,tools,operation,name):
-        inp=c.features.combineFeatures.createInput(target,collection(tools));inp.operation=operation;inp.isKeepToolBodies=False
+    def combine(self,c,target,tools,operation,name,keep=False,all_results=False):
+        inp=c.features.combineFeatures.createInput(target,collection(tools));inp.operation=operation;inp.isKeepToolBodies=keep
         feature=c.features.combineFeatures.add(inp);feature.name=name
-        return feature.bodies.item(0).nativeObject or feature.bodies.item(0)
+        bodies=[item.nativeObject or item for item in feature.bodies]
+        return bodies if all_results else bodies[0]
 
     def rib(self,c,length,inward=False,offset=0,trim=True):
         if self.s.section!='Circular':raise ValueError('Native construction currently supports Circular / On Center; use the preserved legacy profile path for Balanced / Custom.')
@@ -198,10 +199,11 @@ class Builder:
         return feature.bodies.item(0).nativeObject or feature.bodies.item(0)
 
     def offset_bore(self,c,face):
-        if self.s.radial_clearance<=0:return face.body
+        faces=selected_faces(face)
+        if self.s.radial_clearance<=0:return faces[0].body.nativeObject or faces[0].body
         # Positive bore face normal points toward the axis; a negative offset
         # removes nut material and grows the bore by tolerance on each side.
-        inp=c.features.offsetFacesFeatures.createInput([face],VI('-'+self.p['tolerance']))
+        inp=c.features.offsetFacesFeatures.createInput(faces,VI('-'+self.p['tolerance']))
         feature=c.features.offsetFacesFeatures.add(inp);feature.name='Uniform normal bore clearance'
         return feature.bodies.item(0).nativeObject or feature.bodies.item(0)
 
@@ -274,10 +276,14 @@ def apply(design,selected,spec,reverse=False,expressions=None):
     face,frame,diameter,available,internal=cylinder_frame(selected,reverse)
     if spec.length>available+1e-5:raise ValueError(f'Thread length exceeds selected face ({available:g} mm).')
     if abs(spec.root_diameter-diameter)>1e-5:raise ValueError('Diameter must match the selected cylinder.')
-    validate_clearance(spec,internal)
+    validate_clearance(spec,internal);validate_draft(selected,spec)
+    reference=None
+    if internal==spec.cut_screw:
+        from .selection import expanded_reference
+        reference=expanded_reference(design,selected,spec.height)
     builder=Builder(design,spec,expressions)
     try:
-        context=selected.assemblyContext
+        context=selected_faces(selected)[0].assemblyContext
         target=face.body;c=target.parentComponent
         if internal and spec.section=='Circular':target=builder.offset_bore(c,selected)
         if context:target=target.createForAssemblyContext(context)
@@ -286,11 +292,23 @@ def apply(design,selected,spec,reverse=False,expressions=None):
         if context:root_frame.transformBy(context.transform2)
         occ,toolc=builder.component('Apply thread construction',root_frame)
         ribs=builder.rib(toolc,builder.p['length'],spec.cut_screw,offset=(-1 if spec.cut_screw else 1) if internal and spec.radial_clearance>0 and spec.section=='Circular' else 0)
+        if internal==spec.cut_screw:
+            # Extend rotational faces on a copy of the part. Its planar mold
+            # cuts and oblique ends trim the rib without bridging empty space.
+            inverse=frame.copy();inverse.invert();b.transform(reference,inverse)
+            clipped=[]
+            for rib in ribs:
+                base=b.persist(toolc,[b.manager().copy(reference)],'Thread boundary reference')
+                envelope=base.bodies.item(0).createForAssemblyContext(occ)
+                clipped.extend(builder.combine(toolc,rib,[envelope],OP.IntersectFeatureOperation,'Preserve mold cut boundaries',all_results=True))
+            ribs=clipped
         tools=[body.createForAssemblyContext(occ) for body in ribs]
-        target=builder.combine(c,target,tools,OP.JoinFeatureOperation if internal==spec.cut_screw else OP.CutFeatureOperation,'Apply printable thread')
-        target=builder.chamfer_lands(c,target,internal,context)
-        b.check(target,'Applied native thread')
-        target.attributes.add('PrintableThreads.native','parameters',builder.prefix)
+        results=builder.combine(c,target,tools,OP.JoinFeatureOperation if internal==spec.cut_screw else OP.CutFeatureOperation,'Apply printable thread',all_results=True)
+        for result in results:
+            result=builder.chamfer_lands(c,result,internal,context)
+            b.check(result,'Applied native thread')
+            result.attributes.add('PrintableThreads.native','parameters',builder.prefix)
+        target=results[0]
         builder.finish('Printable Threads — Apply nut' if internal else 'Printable Threads — Apply screw')
         return target
     except Exception:

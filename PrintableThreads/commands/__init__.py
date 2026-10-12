@@ -17,7 +17,7 @@ from ..lib import events
 
 PREFIX='PrintableThreads_'
 MENU_ID=PREFIX+'menu'
-VERSION='0.5.2'
+VERSION='0.5.3'
 COMMANDS=[('create','Create Printable Thread','Create a screw, female part, or matched pair.'),
           ('apply','Apply Printable Thread','Add a printable thread to a cylindrical face.'),
           ('edit','Edit Printable Thread','Regenerate a fastener made by this add-in.'),
@@ -37,14 +37,14 @@ def build_pending(args):
 
 
 TIPS={
- 'target':('Choose the part','Select one cylindrical face, bounded by two circular ends, or one body previously made by Printable Threads.'),
+ 'target':('Choose the part','Select circular cylinder or drafted faces sharing one axis on the same body, including faces interrupted by a cut. Edit selects one add-in-owned body.'),
  'output':('What to make','Screw makes the male part, Female makes the mating part, and Matched pair makes both.'),
  'swap_threads':('Swap screw and nut thread operations','Off: cut a groove in the screw and join an inward rib to the nut. On: join a rib to the screw and cut a groove in the nut.'),
  'root_diameter':('Coil diameter for an on-center circular section','Circular mode centers the section on this diameter, just like Coil / On Center. With a joined screw, outside diameter equals Diameter plus Section size. With a cut screw, outside diameter stays at Diameter. In legacy trapezoid modes this is the base cylinder diameter.'),
  'pitch':('Distance between neighboring ridges','Pitch is measured along the axis. Lead equals pitch multiplied by the number of starts.'),
  'thread_size':('Circular section diameter, like Coil Section Size','Circular / On Center uses the full circle diameter. Half extends outside the base cylinder and half inside. Circular Create/Apply also add an automatic print-edge chamfer, up to 0.2 mm and smaller for tight sections. Legacy Balanced and Custom modes use radial height.'),
  'length':('Axial threaded length','Revolutions are calculated automatically as length divided by lead.'),
- 'live_preview':('Show live preview','Displays a lightweight mesh that updates immediately. Clicking OK builds the exact Fusion solid.'),
+ 'live_preview':('Show live preview','Apply: select all required faces, then turn Solid Preview on. Turn it off to change the faces. Shows the resulting part with shaded surfaces and edges; final native normal clearance and chamfers may differ slightly.'),
  'starts':('Number of intertwined helices','One start is conventional. Multiple starts increase lead while keeping the entered pitch between adjacent ridges.'),
  'left_hand':('Reverse the turning direction','A left-hand thread tightens counterclockwise when viewed from the entering end.'),
  'phase':('Rotate the thread start','Changes where the first ridge begins around the circumference.'),
@@ -138,14 +138,14 @@ class Session:
         self.deferred_build=None
         self.command=command;self.mode=mode;self.handlers=[];self.values={};self.loading=False
         self.auto_female=True;self.auto_knob=True;self.print_on_plate=True;self.target_reference=TargetReference()
-        self.renderer=graphics.Renderer();self.preview_key=None;self.edit_role=None
+        self.renderer=graphics.Renderer();self.preview_key=None;self.edit_role=None;self.preview_targets=None
         command.setDialogInitialSize(390,610)
         inputs=command.commandInputs
         inputs.addTextBoxCommandInput('build_version','','Printable Threads '+VERSION,1,True)
         if mode in ('apply','edit'):
-            select=inputs.addSelectionInput('target','Cylindrical face' if mode=='apply' else 'Printable thread body',
-                                            'Select a full cylindrical face' if mode=='apply' else 'Select one add-in-owned body')
-            select.addSelectionFilter('CylindricalFaces' if mode=='apply' else 'SolidBodies');select.setSelectionLimits(1,1)
+            select=inputs.addSelectionInput('target','Cylinder / draft faces' if mode=='apply' else 'Printable thread body',
+                                            'Select faces sharing a circular axis on one body' if mode=='apply' else 'Select one add-in-owned body')
+            select.addSelectionFilter('Faces' if mode=='apply' else 'SolidBodies');select.setSelectionLimits(1,0 if mode=='apply' else 1)
             self.values['target']=select;self.tip(select,'target')
         if mode=='create':self.dropdown(inputs,'output','Output',['Matched pair','Screw','Female'])
 
@@ -157,8 +157,11 @@ class Session:
         self.length(inputs,'radial_clearance','3D print tolerance',.2)
         if mode=='fit':self.values['radial_clearance'].tooltipDescription+=' Fit Test creates four nearby clearances for comparison; component names identify each sample.'
         self.values['derived']=inputs.addTextBoxCommandInput('derived','','',2,True)
-        self.values['live_preview']=inputs.addBoolValueInput('live_preview','Live Preview',False,'',True)
+        self.values['live_preview']=inputs.addBoolValueInput('live_preview','Solid Preview' if mode=='apply' else 'Live Preview',mode=='apply','',mode!='apply')
         self.tip(self.values['live_preview'],'live_preview')
+        if mode=='apply':
+            self.values['preview_selection']=inputs.addTextBoxCommandInput('preview_selection','','',1,True)
+            self.values['preview_selection'].isVisible=False
 
         advanced=inputs.addGroupCommandInput('advanced','More Options');advanced.isExpanded=False
         advanced.tooltip='Optional controls';advanced.tooltipDescription='Handedness, fit, profile details, placement, knob, and female-part dimensions.'
@@ -186,7 +189,9 @@ class Session:
         for event,callback in [(command.inputChanged,self.changed),(command.validateInputs,self.validate),
                                (command.executePreview,self.preview),(command.execute,self.execute),(command.destroy,self.destroy)]:
             events.add(event,callback,self.handlers)
-        self.restore_preferences();self.update_visibility();self.update_status()
+        self.restore_preferences()
+        if mode=='apply':self.values['live_preview'].value=False
+        self.update_visibility();self.update_status()
 
     def restore_preferences(self):
         saved=preferences.load(self.mode)
@@ -311,9 +316,37 @@ class Session:
         self.values['radial_clearance'].isVisible=True
         if self.mode in ('create','apply'):self.values['axial_clearance'].isVisible=self.selected_name('profile_mode')!='Circular / On Center'
 
+    def current_target(self):
+        return self.preview_targets if self.preview_targets is not None else self.target_reference.capture(self.values['target'])
+
+    def toggle_solid_preview(self):
+        select=self.values['target']
+        self.loading=True
+        try:
+            if self.values['live_preview'].value:
+                if self.preview_targets is not None:return
+                targets=self.target_reference.capture(select)
+                if targets is None:self.values['live_preview'].value=False;return
+                self.preview_targets=targets
+                count=len(selection.selected_faces(targets))
+                self.values['preview_selection'].text=f'{count} face(s) selected — turn Solid Preview off to change selection.'
+                self.values['preview_selection'].isVisible=True
+                select.setSelectionLimits(0,0);select.clearSelection();select.isVisible=False
+            else:
+                self.renderer.clear();select.isVisible=True;select.setSelectionLimits(1,0)
+                targets=self.preview_targets;self.preview_targets=None
+                if targets:
+                    for face in selection.selected_faces(targets):
+                        if face.isValid:select.addSelection(face)
+                self.target_reference.capture(select)
+                self.values['preview_selection'].isVisible=False
+        finally:self.loading=False
+
     def changed(self,args):
         if self.loading:return
         key=args.input.id;self.preview_key=None
+        if key=='live_preview' and self.mode=='apply':self.toggle_solid_preview()
+        if key=='target' and self.preview_targets is not None:return
         if key=='target':self.target_reference.capture(self.values['target'])
         try:
             if key=='female_diameter':self.auto_female=False
@@ -325,8 +358,8 @@ class Session:
                     self.loading=True;self.values['radial_clearance'].expression=('0.5' if name.startswith('Loose') else '0.2')+' mm';self.loading=False
             elif key=='radial_clearance':
                 self.loading=True;self.select_name('fit_preset','Custom');self.loading=False
-            if key in ('target','reverse') and self.values['target'].selectionCount:
-                target=self.target_reference.capture(self.values['target'])
+            if key in ('target','reverse') and self.current_target() is not None:
+                target=self.current_target()
                 if self.mode=='edit':
                     _,_,record,_=ownership.editable(design(),target);self.edit_role=record['role']
                     self.load(Spec.from_json(json.dumps(record['recipe'])))
@@ -346,20 +379,22 @@ class Session:
             if self.mode=='create' and s.section=='Circular':native.validate_clearance(s,s.output!='Screw')
             self.values['derived'].text=(f'Outside Ø {s.major_diameter:g} mm  •  {s.turns:.3g} revolutions\n'
                                          f'Lead {s.lead:g} mm/rev  •  {s.clearance_label}')
-            self.values['status'].text=('Circular: native Coil, uniform nut clearance and print-edge chamfer. Edit PT parameters in Modify → Change Parameters.' if self.mode in ('create','apply') and s.section=='Circular' else 'Balanced / Custom: original legacy construction and fit allowances; native offset conversion is unfinished.' if self.mode in ('create','apply') else 'Ready — preview is approximate; OK creates the exact solid.')
+            self.values['status'].text=('Solid Preview: shaded result; native normal-clearance finishing and edge chamfers may differ slightly. Turn preview off to change faces.' if self.mode=='apply' and self.values['live_preview'].value else 'Circular: native Coil, uniform nut clearance and print-edge chamfer. Edit PT parameters in Modify → Change Parameters.' if self.mode in ('create','apply') and s.section=='Circular' else 'Balanced / Custom: original legacy construction and fit allowances; native offset conversion is unfinished.' if self.mode in ('create','apply') else 'Ready — preview is approximate; OK creates the exact solid.')
             return True
-        except Exception as error:self.values['status'].text=str(error);return False
+        except Exception as error:
+            self.values['derived'].text='';self.values['status'].text=str(error);return False
 
     def validate(self,args):
         valid=self.update_status()
         if self.mode in ('apply','edit'):
-            valid=valid and self.values['target'].selectionCount==1
+            valid=valid and (self.current_target() is not None if self.mode=='apply' else self.values['target'].selectionCount==1)
             if valid:
                 try:
-                    target=self.target_reference.capture(self.values['target'])
+                    target=self.current_target()
                     if self.mode=='edit':ownership.editable(design(),target)
                     else:
                         _,_,_,length,internal=selection.cylinder_frame(target,self.values['reverse'].value)
+                        selection.validate_draft(target,self.read())
                         if self.read().section=='Circular':native.validate_clearance(self.read(),internal)
                         if self.read().length>length+1e-5:raise ValueError('Thread length exceeds the selected cylindrical face.')
                 except Exception as error:self.values['status'].text=str(error);valid=False
@@ -393,21 +428,18 @@ class Session:
         try:
             spec=self.read();target_token=''
             if self.mode in ('apply','edit'):
-                if not self.values['target'].selectionCount:self.renderer.clear();return
-                target=self.target_reference.capture(self.values['target']);target_token=target.entityToken
+                target=self.current_target()
+                if target is None:self.renderer.clear();return
+                target_token=tuple(f.entityToken for f in selection.selected_faces(target))
             position=tuple(self.values[k].value for k in ('x','y','z')) if self.mode not in ('apply','edit') else ()
             key=(spec,self.mode,target_token,position,self.values.get('reverse').value if 'reverse' in self.values else False,self.edit_role)
-            if key==self.preview_key and self.renderer.group and self.renderer.group.isValid:return
+            if key==self.preview_key:return
             self.preview_key=key
             if self.mode=='apply':
                 face,frame,_,_,internal=selection.cylinder_frame(target,self.values['reverse'].value)
-                self.renderer.begin(face.body.parentComponent);shown=spec
-                if internal and spec.section!='Circular':shown=spec.nut_rib() if spec.cut_screw else spec.cutter(length=spec.length)
-                clearance=(-1 if spec.cut_screw else 1)*spec.radial_clearance if internal else 0
-                if internal:
-                    self.renderer.draw(mesh.cylinder(spec.root_diameter/2+spec.radial_clearance,0,spec.length),frame,(255,125,35),.12,'Nut bore clearance preview')
-                self.renderer.draw(mesh.helix(shown,normal_clearance=clearance if spec.section=='Circular' else 0),frame,(255,105,35) if internal != spec.cut_screw else (45,155,255),.78,
-                                   'Cut groove preview' if internal != spec.cut_screw else 'Joined rib preview')
+                candidate=selection.preview_body(design(False,True),target,spec,self.values['reverse'].value)
+                self.renderer.begin(face.body.parentComponent)
+                self.renderer.draw_body(candidate,face.body,'Applied thread solid preview')
             elif self.mode=='edit':
                 native=target.nativeObject or target;self.renderer.begin(native.parentComponent)
                 if self.edit_role=='Female':self.draw_female(spec,b.M())
@@ -425,7 +457,7 @@ class Session:
                         self.draw_female(spec,self.placement(offset))
             self.renderer.finish()
         except Exception as error:
-            self.renderer.clear();self.preview_key=None
+            self.renderer.clear();self.preview_key=locals().get('key')
             self.values['status'].text=f'Preview unavailable: {error}. OK still creates the exact solid.'
             core.Application.get().log(traceback.format_exc())
 

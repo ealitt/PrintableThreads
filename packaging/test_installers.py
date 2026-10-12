@@ -36,7 +36,7 @@ class MacInstallerTests(unittest.TestCase):
             target.mkdir(parents=True)
             (target / 'old-version.txt').write_text('preserve')
             self.run_install(ROOT / 'PrintableThreads', home)
-            self.assertEqual(json.loads((target / 'PrintableThreads.manifest').read_text())['version'], '0.5.2')
+            self.assertEqual(json.loads((target / 'PrintableThreads.manifest').read_text())['version'], json.loads((ROOT / 'PrintableThreads/PrintableThreads.manifest').read_text())['version'])
             self.assertTrue(list((parent.parent / 'PrintableThreads-backups').rglob('old-version.txt')))
             self.assertEqual(settings.read_text(), '{"tolerance":0.5}')
             for source in (ROOT / 'PrintableThreads').rglob('*'):

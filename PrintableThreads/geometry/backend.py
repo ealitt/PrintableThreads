@@ -60,10 +60,29 @@ def persist(component, bodies, name):
         if not component.bRepBodies.add(body): raise GeometryError('Cannot persist BRep body.')
     return None
 
+def scratch_component(root):
+    """Part documents use temporary root features without changing intent."""
+    design=fusion.Design.cast(core.Application.get().activeProduct)
+    if design.designIntent==fusion.DesignIntentTypes.PartDesignIntentType:
+        if design.designType!=fusion.DesignTypes.ParametricDesignType:
+            raise GeometryError('Solid preview needs Capture Design History in a Part document.')
+        return None,root,design.timeline.markerPosition
+    occ=root.occurrences.addNewComponent(M())
+    occ.component.name='Printable Threads construction (temporary)'
+    return occ,occ.component,None
+
+def remove_scratch(occ,start):
+    if occ:
+        if occ.isValid:occ.deleteMe()
+    elif start is not None:
+        design=fusion.Design.cast(core.Application.get().activeProduct)
+        for i in range(design.timeline.markerPosition-1,start-1,-1):
+            entity=design.timeline.item(i).entity
+            if entity and entity.isValid:entity.deleteMe()
+
 def sweep_rib(root,spec,inward=False):
     """Scratch component is deleted even on failure; returned BRep is independent."""
-    scratch=root.occurrences.addNewComponent(M()); c=scratch.component
-    c.name='Printable Threads construction (temporary)'
+    scratch,c,start=scratch_component(root)
     try:
         r=spec.root_diameter/2
         # The smallest whole-turn overshoot keeps the z=0 phase invariant while
@@ -97,17 +116,17 @@ def sweep_rib(root,spec,inward=False):
                 if segment[0]=='line': sk.sketchCurves.sketchLines.addByTwoPoints(pt(segment[1]),pt(segment[2]))
                 else: sk.sketchCurves.sketchArcs.addByThreePoints(pt(segment[1]),pt(segment[2]),pt(segment[3]))
         if sk.profiles.count != 1: raise GeometryError('Rounded section is not one closed profile.')
-        path=fusion.Path.create(wires.item(0).edges.item(0).createForAssemblyContext(scratch),fusion.ChainedCurveOptions.noChainedCurves)
-        rail=fusion.Path.create(wires.item(1).edges.item(0).createForAssemblyContext(scratch),fusion.ChainedCurveOptions.noChainedCurves)
+        path=fusion.Path.create((wires.item(0).edges.item(0).createForAssemblyContext(scratch) if scratch else wires.item(0).edges.item(0)),fusion.ChainedCurveOptions.noChainedCurves)
+        rail=fusion.Path.create((wires.item(1).edges.item(0).createForAssemblyContext(scratch) if scratch else wires.item(1).edges.item(0)),fusion.ChainedCurveOptions.noChainedCurves)
         inp=c.features.sweepFeatures.createInput(sk.profiles.item(0),path,fusion.FeatureOperations.NewBodyFeatureOperation)
-        inp.creationOccurrence=scratch
+        if scratch:inp.creationOccurrence=scratch
         inp.guideRail=rail
         inp.profileScaling=fusion.SweepProfileScalingOptions.SweepProfileNoScalingOption
         sweep=c.features.sweepFeatures.add(inp)
         if not sweep or sweep.bodies.count != 1: raise GeometryError('Guided sweep failed.')
         return check(manager().copy(sweep.bodies.item(0)),'Thread rib')
     finally:
-        if scratch.isValid: scratch.deleteMe()
+        remove_scratch(scratch,start)
 
 def threaded(root,spec,entry=True):
     rib=sweep_rib(root,spec,inward=spec.cut_screw)

@@ -18,6 +18,15 @@ class TargetTests(unittest.TestCase):
         old.isValid=False
         new=SimpleNamespace(isValid=True)
         self.assertIs(target.resolve(SimpleNamespace(findEntityByToken=lambda token:[new] if token=='face-token' else [])),new)
+    def test_multi_face_capture_and_promotion(self):
+        faces=tuple(SimpleNamespace(isValid=True,entityToken=str(i)) for i in range(2))
+        selection=SimpleNamespace(selectionCount=2,selection=lambda i:SimpleNamespace(entity=faces[i]))
+        target=TargetReference();self.assertEqual(target.before_execute(selection),faces)
+        selection.selectionCount=0;target.capture(selection)
+        self.assertEqual(target.resolve(None),faces)
+        faces[1].isValid=False
+        replacement=SimpleNamespace(isValid=True)
+        self.assertEqual(target.resolve(SimpleNamespace(findEntityByToken=lambda token:[replacement])),(faces[0],replacement))
     def test_explicit_deselection_forgets_target(self):
         target=TargetReference();target.entity=object();target.token='old'
         selection=SimpleNamespace(selectionCount=0)

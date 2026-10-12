@@ -14,6 +14,13 @@ class RecipeTests(unittest.TestCase):
         s=replace(Spec(),starts=3,pitch=2,length=12,width=1.3).validate()
         self.assertEqual(s.lead,6);self.assertEqual(s.turns,2)
         self.assertAlmostEqual(start_phases(3)[2],4*math.pi/3)
+    def test_short_wide_circular_thread(self):
+        s=replace(Spec().with_circular_section(3),root_diameter=4,pitch=5,length=3.65,axial_clearance=0,entry=0,knob='None',output='Screw').validate()
+        self.assertAlmostEqual(s.turns,.73)
+        with self.assertRaisesRegex(ValueError,'reaches the axis'):
+            s.with_circular_section(4).validate()
+        with self.assertRaisesRegex(ValueError,'between turns'):
+            replace(s,pitch=3).validate()
     def test_units(self):self.assertEqual(mm_to_cm(12),1.2)
     def test_fractional_turns(self):self.assertEqual(replace(Spec(),length=1.5).turns,.5)
     def test_overshoot_phase(self):
