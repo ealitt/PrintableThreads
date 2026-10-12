@@ -140,3 +140,8 @@ def phase_at_z(z, lead, phase=0, left=False):
 
 def start_phases(starts, phase=0):
     return [math.radians(phase)+2*math.pi*i/starts for i in range(starts)]
+
+
+def default_knob_dimensions(major_diameter):
+    """A proportional grip with a small-part minimum and printable thickness."""
+    return max(major_diameter+2,1.6*major_diameter),max(2,min(12,.3*major_diameter))

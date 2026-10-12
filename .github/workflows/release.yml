@@ -70,10 +70,10 @@ jobs:
           pattern: installers-*
           merge-multiple: true
           path: dist
-      - name: Create checksums and publish engineering preview
+      - name: Create checksums and publish main release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           python packaging/build.py --checksums-only
-          gh release create "$RELEASE_TAG" dist/* --verify-tag --prerelease --title "Printable Threads $RELEASE_TAG" --notes-file "docs/RELEASE-${RELEASE_TAG#v}.md"
+          gh release create "$RELEASE_TAG" dist/* --verify-tag --latest --title "Printable Threads $RELEASE_TAG" --notes-file "docs/RELEASE-${RELEASE_TAG#v}.md"

@@ -11,18 +11,15 @@ def selected_faces(selected):
 
 def cylinder_frame(selected,reverse=False):
     selected=selected_faces(selected)
-    faces=[item.nativeObject or item for item in selected]
+    faces=selected
     face=faces[0];surface=core.Cylinder.cast(face.geometry) or core.Cone.cast(face.geometry)
     if not surface or not face.body.isSolid:
         raise ValueError('Select cylindrical or circular drafted faces on a solid body.')
     z=surface.axis.copy();z.normalize()
     points=[];intervals=[];internal=None
-    context=selected[0].assemblyContext
     for item,f in zip(selected,faces):
         other=core.Cylinder.cast(f.geometry) or core.Cone.cast(f.geometry)
         if not other:raise ValueError('Every selected face must be cylindrical or circular drafted.')
-        if f.body!=face.body or item.assemblyContext!=context:
-            raise ValueError('Select faces on the same body and component occurrence.')
         axis=other.axis.copy();axis.normalize()
         delta=surface.origin.vectorTo(other.origin);cross=delta.crossProduct(z)
         if abs(abs(axis.dotProduct(z))-1)>1e-7 or cross.length>1e-5:
@@ -50,10 +47,6 @@ def cylinder_frame(selected,reverse=False):
     if not points:raise ValueError('Selected faces have no measurable boundaries.')
     projections=[surface.origin.vectorTo(p).dotProduct(z) for p in points]
     low,high=min(projections),max(projections)
-    covered=low
-    for start,end in sorted(intervals):
-        if start>covered+2e-5:raise ValueError('Selected faces have an axial gap. Select the intervening faces too.')
-        covered=max(covered,end)
     if high-low<1e-6:raise ValueError('Selected faces have no axial length.')
     # Verify all faces belong to the same rotational surface, including cones.
     radii=[]
@@ -78,7 +71,47 @@ def cylinder_frame(selected,reverse=False):
     reference=core.Vector3D.create(1,0,0) if abs(z.x)<.9 else core.Vector3D.create(0,1,0)
     y=z.crossProduct(reference);y.normalize();x=y.crossProduct(z);x.normalize()
     m=core.Matrix3D.create();m.setWithCoordinateSystem(origin,x,y,z)
-    return face,m,radius*20,(high-low)*10,internal
+    # Public frame stays in the first owner's coordinates for existing callers.
+    context=selected[0].assemblyContext
+    if context:
+        inverse=context.transform2.copy();inverse.invert();m.transformBy(inverse)
+    return face.nativeObject or face,m,radius*20,(high-low)*10,internal
+
+def target_groups(selected):
+    groups=[]
+    for face in selected_faces(selected):
+        native=face.nativeObject or face
+        context=face.assemblyContext
+        key=(native.body.entityToken,context.fullPathName if context else '')
+        group=next((g for k,g in groups if k==key),None)
+        if group is None:group=[];groups.append((key,group))
+        group.append(face)
+    return [g for _,g in groups]
+
+def shared_frames(selected,reverse=False):
+    face,local,diameter,available,internal=cylinder_frame(selected,reverse)
+    world=local.copy();context=selected_faces(selected)[0].assemblyContext
+    if context:world.transformBy(context.transform2)
+    result=[]
+    for group in target_groups(selected):
+        frame=world.copy();context=group[0].assemblyContext
+        if context:
+            inverse=context.transform2.copy();inverse.invert();frame.transformBy(inverse)
+        result.append((group,(frame,diameter,available,internal)))
+    return result
+
+def overlaps_interval(group,shared,length):
+    inverse=shared[0].copy();inverse.invert();heights=[]
+    for item in group:
+        face=item.nativeObject or item
+        for edge in face.edges:
+            ok,a,end=edge.evaluator.getParameterExtents()
+            if not ok:raise ValueError('Cannot measure thread interval.')
+            ok,points=edge.evaluator.getStrokes(a,end,1e-5)
+            if not ok:raise ValueError('Cannot measure thread interval.')
+            for point in points:
+                point.transformBy(inverse);heights.append(point.z*10)
+    return min(max(heights),length)-max(min(heights),0)>1e-5
 
 def validate_draft(selected,spec):
     radii=[]
@@ -118,15 +151,12 @@ def expanded_reference(design,selected,distance):
     finally:
         b.remove_scratch(scratch,start)
 
-def preview_body(design,selected,spec,reverse=False):
-    face,frame,diameter,available,internal=cylinder_frame(selected,reverse)
-    if spec.length>available+1e-5:raise ValueError(f'Thread length exceeds the {available:g} mm axial span.')
-    validate_draft(selected,spec)
+def preview_tool(design,spec,internal):
     # Same nominal helix and boolean as Apply. Native normal offsets and optional
     # edge chamfers are finishing operations, so remain excluded from this preview.
     shown=spec
     if internal:
-        shown=replace(spec,root_diameter=diameter+2*spec.radial_clearance)
+        shown=replace(spec,root_diameter=spec.root_diameter+2*spec.radial_clearance)
         if spec.section!='Circular':shown=spec.nut_rib() if spec.cut_screw else spec.cutter(length=spec.length)
         elif spec.radial_clearance:
             size=spec.thread_size+(-2 if spec.cut_screw else 2)*spec.radial_clearance
@@ -136,6 +166,15 @@ def preview_body(design,selected,spec,reverse=False):
         reflection=b.M();reflection.setCell(1,1,-1);b.transform(tool,reflection)
     b.rotate(tool,math.radians(spec.phase))
     b.intersect(tool,b.cylinder(shown.root_diameter/2+shown.height+1,0,spec.length))
+    return tool
+
+def preview_body(design,selected,spec,reverse=False,shared=None,prepared=None):
+    face=selected_faces(selected)[0].nativeObject or selected_faces(selected)[0]
+    frame,diameter,available,internal=shared or cylinder_frame(selected,reverse)[1:]
+    if spec.length>available+1e-5:raise ValueError(f'Thread length exceeds the {available:g} mm axial span.')
+    validate_draft(selected,spec)
+    if not overlaps_interval(selected_faces(selected),(frame,diameter,available,internal),spec.length):return b.manager().copy(face.body)
+    tool=b.manager().copy(prepared) if prepared is not None else preview_tool(design,spec,internal)
     candidate=b.manager().copy(face.body)
     joining=internal==spec.cut_screw
     if internal and spec.radial_clearance:
@@ -148,8 +187,16 @@ def preview_body(design,selected,spec,reverse=False):
         (b.union if joining else b.cut)(candidate,rib)
     return validate_applied(candidate,face.body.lumps.count,joining)
 
-def apply(design,selected,spec,reverse=False):
-    face,m,diameter,available,internal=cylinder_frame(selected,reverse)
+def apply(design,selected,spec,reverse=False,shared=None):
+    if shared is None and len(target_groups(selected))>1:
+        plans=[(group,frame) for group,frame in shared_frames(selected,reverse) if overlaps_interval(group,frame,spec.length)]
+        start=design.timeline.markerPosition
+        try:return [apply(design,group,spec,reverse,frame) for group,frame in plans]
+        except Exception:
+            b.remove_scratch(None,start)
+            raise
+    face=selected_faces(selected)[0].nativeObject or selected_faces(selected)[0]
+    m,diameter,available,internal=shared or cylinder_frame(selected,reverse)[1:]
     if spec.length>available+1e-5:raise ValueError(f'Thread length exceeds selected face ({available:g} mm).')
     if abs(spec.root_diameter-diameter)>1e-5: raise ValueError('Root diameter must match the selected cylinder.')
     target=face.body

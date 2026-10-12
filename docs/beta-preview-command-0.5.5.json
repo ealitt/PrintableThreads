@@ -1,0 +1,11 @@
+{
+  "initial_snapshot": true,
+  "edit_seconds": 0.001323124999544234,
+  "edit_without_geometry": true,
+  "explicit_refresh": true,
+  "unchanged_refresh_reuses_cache": true,
+  "five_cached_redraws_seconds": 0.038179291999767884,
+  "cached_redraw_without_geometry": true,
+  "visibility_restored": true,
+  "passed": true
+}

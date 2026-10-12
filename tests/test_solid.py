@@ -1,6 +1,6 @@
 import unittest
 from types import SimpleNamespace
-from PrintableThreads.model.solid import validate_applied
+from PrintableThreads.model.solid import validate_applied,validate_applied_results
 
 def solid(regions=1,volume=1):
     return SimpleNamespace(isSolid=True,volume=volume,lumps=SimpleNamespace(count=regions))
@@ -19,3 +19,9 @@ class AppliedSolidTests(unittest.TestCase):
         for result in (None,solid(0),solid(volume=0),surface):
             with self.subTest(result=result),self.assertRaisesRegex(ValueError,'closed solid'):
                 validate_applied(result,1,False)
+
+    def test_join_rejects_detached_separate_body(self):
+        with self.assertRaisesRegex(ValueError,'joined to each'):
+            validate_applied_results([solid(),solid()],1,True)
+    def test_cut_retains_all_split_results(self):
+        self.assertEqual(len(validate_applied_results([solid(),solid()],1,False)),2)

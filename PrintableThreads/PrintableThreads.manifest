@@ -4,7 +4,7 @@
   "id": "2fe5661d-f8ed-4bc2-88ee-5b9825d5b8fb",
   "author": "PrintableThreads",
   "description": {"": "Modeled rounded threads, knob screws, matching nuts and fit coupons for FDM printing."},
-  "version": "0.5.3",
+  "version": "0.5.5",
   "runOnStartup": true,
   "supportedOS": "windows|mac",
   "editEnabled": true

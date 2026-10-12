@@ -6,3 +6,12 @@ def validate_applied(body, original_regions, joining):
         raise ValueError('Some thread fragments do not touch the selected part. Reduce 3D print tolerance or Section size, or apply to a smaller cylindrical region.')
     # Cuts on thin or interrupted parts may split material into several solids.
     return body
+
+
+def validate_applied_results(bodies,original_regions,joining):
+    """Validate every Combine result, including separate disconnected bodies."""
+    if not bodies:raise ValueError('Applying this thread did not leave a closed solid.')
+    for body in bodies:validate_applied(body,original_regions,joining)
+    if joining and sum(body.lumps.count for body in bodies)>original_regions:
+        raise ValueError('Some thread fragments do not touch the selected part. The thread must be joined to each selected body.')
+    return bodies

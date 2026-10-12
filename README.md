@@ -17,11 +17,11 @@ A dependency-free Python add-in for modeled FDM threads: circular On Center and 
 
 ## Download and install
 
-Download the [0.5.3 release](https://github.com/ealitt/PrintableThreads/releases/tag/v0.5.3):
+Download the [0.5.5 release](https://github.com/ealitt/PrintableThreads/releases/tag/v0.5.5):
 
-- **[macOS installer (.pkg)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.3/PrintableThreads-0.5.3-macOS-unsigned.pkg)**
-- **[Windows installer (.exe)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.3/PrintableThreads-0.5.3-Windows-unsigned.exe)**
-- **[ZIP fallback](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.3/PrintableThreads-0.5.3.zip)**
+- **[macOS installer (.pkg)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.5/PrintableThreads-0.5.5-macOS-unsigned.pkg)**
+- **[Windows installer (.exe)](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.5/PrintableThreads-0.5.5-Windows-unsigned.exe)**
+- **[ZIP fallback](https://github.com/ealitt/PrintableThreads/releases/download/v0.5.5/PrintableThreads-0.5.5.zip)**
 
 Close Fusion, double-click your installer, then reopen Fusion. Open **Design → Solid → Create → Printable Threads** at the bottom of Create. If missing, press **Shift+S → Add-Ins → PrintableThreads → Run**, then enable **Run on Startup**. Fresh installs default to startup enabled; upgrades can retain Fusion's prior preference.
 
@@ -35,23 +35,23 @@ release files keep their unsigned labels until real platform verification succee
 
 ### Mac installer blocked
 
-For the unsigned **0.5.3** package downloaded into your **Downloads** folder, open
+For the unsigned **0.5.5** package downloaded into your **Downloads** folder, open
 **Terminal** and remove only its quarantine attribute:
 
 ```sh
-xattr -d com.apple.quarantine ~/Downloads/PrintableThreads-0.5.3-macOS-unsigned.pkg
+xattr -d com.apple.quarantine ~/Downloads/PrintableThreads-0.5.5-macOS-unsigned.pkg
 ```
 
 Then open the installer:
 
 ```sh
-open ~/Downloads/PrintableThreads-0.5.3-macOS-unsigned.pkg
+open ~/Downloads/PrintableThreads-0.5.5-macOS-unsigned.pkg
 ```
 
 Optionally check the remaining attributes:
 
 ```sh
-xattr -l ~/Downloads/PrintableThreads-0.5.3-macOS-unsigned.pkg
+xattr -l ~/Downloads/PrintableThreads-0.5.5-macOS-unsigned.pkg
 ```
 
 If `com.apple.quarantine` is absent, it has been removed. An error saying that the
@@ -75,7 +75,7 @@ Its closest equivalent to the Mac command is **Unblock-File**. After checking th
 you trust the download, open **PowerShell** and run:
 
 ```powershell
-Unblock-File -LiteralPath "$env:USERPROFILE\Downloads\PrintableThreads-0.5.3-Windows-unsigned.exe"
+Unblock-File -LiteralPath "$env:USERPROFILE\Downloads\PrintableThreads-0.5.5-Windows-unsigned.exe"
 ```
 
 Then double-click the installer in Downloads. If you saved it elsewhere, change the
@@ -117,7 +117,7 @@ again. Avoid disabling antivirus or adding broad folder exclusions to install th
 - **Thread length** — axial length to cover. Revolutions are calculated as `length ÷ (pitch × starts)`.
 - **3D print tolerance** — initially **0.2 mm**. Circular Create and Apply use a uniform offset normal to every nut mating surface, including the straight bore and curved thread. The bore grows by 0.4 mm in diameter; the screw remains nominal.
 
-Outside diameter, lead, revolutions, and fit are shown as derived values. The Output dropdown chooses the part to create. **More Options** is collapsed until needed and contains handedness, fit, custom cross-section, knob, female-part, and placement controls. Female and knob diameters follow the main diameter and section size until you edit them directly. Every input includes a short tooltip and a longer plain-language explanation.
+Outside diameter, lead, revolutions, and fit are shown as derived values. The Output dropdown chooses the part to create. **More Options** is collapsed until needed and contains handedness, fit, custom cross-section, knob, female-part, and placement controls. Female diameter follows the main diameter and section size until edited. **Knob sizing → Automatic** scales diameter and thickness with the thread outside diameter; choosing **Custom** or editing either knob dimension preserves your override. Automatic knob dimensions remain linked to native thread parameters after creation. Create and Apply share the latest valid thread settings while retaining separate head settings. Every input includes a short tooltip and a longer plain-language explanation.
 
 **More Options → Cross-section** defaults to **Circular / On Center**. The diameter and section-size conventions follow [Autodesk’s Coil reference](https://help.autodesk.com/cloudhelp/ENU/Fusion-Model/files/SLD-REF-COIL.htm). For example, diameter 12 mm and section size 2 mm make a cut screw with outside diameter 12 mm and groove-bottom diameter 10 mm; the swapped joined screw has outside diameter 14 mm. Use one start to match Coil pitch directly; with multiple starts the helix lead is Pitch × Starts. Thread length is trimmed to the requested axial interval, and knobs/entries are additional thread-tool features. Circular nut construction offsets the mating geometry by the requested normal clearance.
 
@@ -135,9 +135,9 @@ The construction component’s local Z remains its screw axis; positions use the
 
 Fusion's current New Document command creates an empty Part design, which cannot contain the separate components used by this add-in. Printable Threads promotes a completely empty Part document to Hybrid design intent when you click OK. Opening and cancelling the dialog leaves the document unchanged. Create and Apply can also promote populated Part documents on OK. Fit Test requires Hybrid or Assembly intent for populated Part documents.
 
-**Apply Printable Thread** accepts one or more cylindrical or circular drafted faces on the same solid body and occurrence. Faces must share a rotational surface and a continuous axial span; planar faces, mismatched diameters/tapers, separate bodies and unrelated axes receive specific errors. Partial cylinders, mold slots, and oblique ends are supported. The thread has a common axis and phase across the cut. Joined ribs are trimmed against an expanded copy of the selected part so planar cut boundaries stay empty; all resulting fragments are retained. Drafted parts use a straight reference thread at the largest outside diameter or smallest bore diameter, and excessive draft for the section size is rejected. This creates a straight mating thread, not a tapered fastener.
+**Apply Printable Thread** accepts one or more cylindrical or circular drafted faces across separate solid bodies and component occurrences. Faces must share a rotational surface in assembly coordinates; planar faces, mismatched diameters/tapers and unrelated axes receive specific errors. All targets share the same helix phase and axial interval. Gaps remain empty, and bodies outside a shortened interval are left unchanged. Partial cylinders, mold slots, and oblique ends are supported. The thread has a common axis and phase across the cut. Joined ribs are trimmed against an expanded copy of the selected part so planar cut boundaries stay empty; all resulting fragments are retained. Drafted parts use a straight reference thread at the largest outside diameter or smallest bore diameter, and excessive draft for the section size is rejected. This creates a straight mating thread, not a tapered fastener.
 
-Select all faces, then enable **Solid Preview** to inspect a shaded result with visible solid edges and without Fusion's blue selection overlay. Disable it to change the selection. The preview uses a kernel sweep and solid booleans; native normal-clearance finishing and optional edge chamfers can differ slightly. Cancel restores visibility and removes temporary features. Part previews preserve Part design intent. Apply promotes Part to Hybrid on OK for editable native construction. Reverse axis chooses the opposite axial bound. Only the selected body participates in the final Combine; split results are preserved. Knobs and entry taper are disabled. Repeated occurrences share the native body, so applying to one updates all occurrences of that component.
+Select all faces, then enable **Solid Preview (Beta)** to inspect a shaded result with visible solid edges and without Fusion's blue selection overlay. Disable it to change the selection. It creates a cached snapshot on demand. Editing settings clears the old snapshot without rebuilding geometry; click **Refresh Solid Preview** when ready. Refresh still uses Fusion’s main-thread kernel and can pause briefly on complex geometry. Thread tools are shared across targets, meshes are cached, and edges are batched. The preview uses a kernel sweep and solid booleans; native normal-clearance finishing and optional edge chamfers can differ slightly. Cancel restores visibility and removes temporary features. Part previews preserve Part design intent. Apply promotes Part to Hybrid on OK for editable native construction. Reverse axis chooses the opposite axial bound. Each selected body participates in its own Combine; split results are preserved, and a failed native batch rolls back all its targets. Knobs and entry taper are disabled. Repeated occurrences share the native body. Compatible local thread phases are applied once; if selected shared instances require different local geometry, make them independent with Paste New first.
 
 Create, Apply, and Fit Test can insert features at the current timeline marker, including in the middle of the history. Apply uses the selected cylinder as it exists at that point; later features recompute through Fusion. Opening or cancelling the dialog does not move the marker.
 
@@ -174,7 +174,7 @@ Existing operations remain unchanged. Balanced/Custom, Fit Test, and legacy Edit
 
 ## Release scope
 
-This is a **0.5.3 engineering preview**, not a standardized fastener or commercial bottle-thread library. Implemented: circular On Center, rounded trapezoid (radius zero gives sharp trapezoid), axial/radial fit controls, end trimming, standalone entry easing, lobed/cylindrical knobs, independent engagement, caps, multistart, handedness, responsive Custom Graphics preview, basic owned regeneration and cylindrical application.
+This is a **0.5.5 release**, not a standardized fastener or commercial bottle-thread library. Implemented: circular On Center, rounded trapezoid (radius zero gives sharp trapezoid), axial/radial fit controls, end trimming, standalone entry easing, lobed/cylindrical knobs, independent engagement, caps, multistart, handedness, responsive Custom Graphics preview, basic owned regeneration and cylindrical application.
 
 Deferred from the outline: triangle profile families, separate crest/root radius controls, native conversion of the advanced trapezoidal profiles, shoulder relief/runout, knob edge fillets, hex blanks, standalone face/center placement, manipulators, turns-driven UI, advanced external cut-groove mode, associative legacy regeneration, an add-in dialog for editing native thread groups and custom timeline features. Unsupported selections fail with an explanation. See [validation evidence and outstanding checks](docs/TEST-RESULTS.md).
 
@@ -196,3 +196,8 @@ A minimal original F3D template supplies the native editable Coil because [Fusio
 
 
 0.5.3 fixes section-size validation on short threads, reports axis/pitch/draft limits explicitly, adds multiple-face interrupted/drafted Apply, and adds solid inspection previews. The 3.65 mm regression uses a 4 mm cylinder, 5 mm pitch and 3 mm circular section. A 4 mm section on that cylinder reaches the axis and is rejected with that explanation. See [Fusion geometry regression](docs/short-interrupted-probe.json), [real command commit](docs/solid-preview-command.json), and [solid preview](docs/solid-preview.png).
+
+
+0.5.4 extends Apply and Solid Preview across separate bodies and assembly occurrences. Automatically measured diameter and thread length display at most three significant figures while exact geometry and parameter values are retained. See [cross-body tests](docs/multi-body-probe.json) and [gap/shared-instance tests](docs/multi-body-edge-probe.json).
+
+0.5.5 marks Solid Preview as beta and makes it an on-demand cached snapshot. Parameter edits perform no kernel preview work; Refresh builds a shared tool once for all targets. Automatic heads scale with the thread diameter, custom heads retain their dimensions, and generated bodies retain complete recipes. See [preview and head validation](docs/RELEASE-0.5.5.md).

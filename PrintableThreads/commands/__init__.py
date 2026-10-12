@@ -6,7 +6,7 @@ from dataclasses import asdict,replace
 from pathlib import Path
 import adsk.core as core
 import adsk.fusion as fusion
-from ..model.spec import Spec,fit_clearances
+from ..model.spec import Spec,fit_clearances,default_knob_dimensions
 from ..model import preferences
 from ..model.target import TargetReference
 from ..geometry import backend as b
@@ -17,9 +17,9 @@ from ..lib import events
 
 PREFIX='PrintableThreads_'
 MENU_ID=PREFIX+'menu'
-VERSION='0.5.3'
+VERSION='0.5.5'
 COMMANDS=[('create','Create Printable Thread','Create a screw, female part, or matched pair.'),
-          ('apply','Apply Printable Thread','Add a printable thread to a cylindrical face.'),
+          ('apply','Apply Printable Thread','Apply a continuous printable thread across coaxial faces, bodies and occurrences.'),
           ('edit','Edit Printable Thread','Regenerate a fastener made by this add-in.'),
           ('fit','Printable Thread Fit Test','Create four clearly marked clearance samples.')]
 controls=[]
@@ -37,14 +37,14 @@ def build_pending(args):
 
 
 TIPS={
- 'target':('Choose the part','Select circular cylinder or drafted faces sharing one axis on the same body, including faces interrupted by a cut. Edit selects one add-in-owned body.'),
+ 'target':('Choose the part','Select circular cylinder or drafted faces sharing one axis across bodies and occurrences, including faces interrupted by a cut. Edit selects one add-in-owned body.'),
  'output':('What to make','Screw makes the male part, Female makes the mating part, and Matched pair makes both.'),
  'swap_threads':('Swap screw and nut thread operations','Off: cut a groove in the screw and join an inward rib to the nut. On: join a rib to the screw and cut a groove in the nut.'),
  'root_diameter':('Coil diameter for an on-center circular section','Circular mode centers the section on this diameter, just like Coil / On Center. With a joined screw, outside diameter equals Diameter plus Section size. With a cut screw, outside diameter stays at Diameter. In legacy trapezoid modes this is the base cylinder diameter.'),
  'pitch':('Distance between neighboring ridges','Pitch is measured along the axis. Lead equals pitch multiplied by the number of starts.'),
  'thread_size':('Circular section diameter, like Coil Section Size','Circular / On Center uses the full circle diameter. Half extends outside the base cylinder and half inside. Circular Create/Apply also add an automatic print-edge chamfer, up to 0.2 mm and smaller for tight sections. Legacy Balanced and Custom modes use radial height.'),
  'length':('Axial threaded length','Revolutions are calculated automatically as length divided by lead.'),
- 'live_preview':('Show live preview','Apply: select all required faces, then turn Solid Preview on. Turn it off to change the faces. Shows the resulting part with shaded surfaces and edges; final native normal clearance and chamfers may differ slightly.'),
+ 'live_preview':('Show live preview','Beta: builds a solid snapshot only when enabled or explicitly refreshed. Settings edits never rebuild it automatically. Turn it off to change faces. Final native normal clearance and chamfers may differ slightly.'),
  'starts':('Number of intertwined helices','One start is conventional. Multiple starts increase lead while keeping the entered pitch between adjacent ridges.'),
  'left_hand':('Reverse the turning direction','A left-hand thread tightens counterclockwise when viewed from the entering end.'),
  'phase':('Rotate the thread start','Changes where the first ridge begins around the circumference.'),
@@ -61,6 +61,7 @@ TIPS={
  'blind':('Close the bottom of the female part','Creates a cap instead of a through nut.'),
  'floor':('Thickness below a blind thread','Material between the thread opening and the closed end.'),
  'knob':('Grip on the screw','Choose a lobed hand grip, a plain cylinder, or no grip.'),
+ 'knob_sizing':('Automatic or custom head sizing','Automatic uses a proportional diameter and printable thickness linked to the thread parameters. Editing either head dimension switches to Custom and remembers your override.'),
  'knob_diameter':('Outside diameter of the grip','A larger grip gives more turning leverage.'),
  'knob_height':('Axial grip thickness','The grip extends behind the start of the threaded shaft.'),
  'lobes':('Number of rounded grip lobes','More lobes make a finer grip; fewer lobes make larger finger surfaces.'),
@@ -123,8 +124,9 @@ def stop():
     for session in list(sessions):
         session.renderer.clear();events.clear(session.handlers)
     sessions.clear();events.clear();pending.clear();_remove_ui(ui);controls.clear()
-    try:core.Application.get().unregisterCustomEvent(NATIVE_EVENT)
-    except Exception:pass
+    for event_id in (NATIVE_EVENT,):
+        try:core.Application.get().unregisterCustomEvent(event_id)
+        except Exception:pass
     for mode,_,_ in COMMANDS:
         definition=ui.commandDefinitions.itemById(PREFIX+mode)
         if definition:definition.deleteMe()
@@ -137,14 +139,14 @@ class Session:
     def __init__(self,command,mode):
         self.deferred_build=None
         self.command=command;self.mode=mode;self.handlers=[];self.values={};self.loading=False
-        self.auto_female=True;self.auto_knob=True;self.print_on_plate=True;self.target_reference=TargetReference()
-        self.renderer=graphics.Renderer();self.preview_key=None;self.edit_role=None;self.preview_targets=None
+        self.auto_female=True;self.auto_knob=True;self.auto_knob_height=True;self.print_on_plate=True;self.target_reference=TargetReference()
+        self.renderer=graphics.Renderer();self.preview_key=None;self.edit_role=None;self.preview_targets=None;self.target_dimensions={};self.preview_requested=False;self.preview_dirty=False;self.preview_tool_cache=None;self.preview_snapshot=[];self.document=core.Application.get().activeDocument
         command.setDialogInitialSize(390,610)
         inputs=command.commandInputs
         inputs.addTextBoxCommandInput('build_version','','Printable Threads '+VERSION,1,True)
         if mode in ('apply','edit'):
             select=inputs.addSelectionInput('target','Cylinder / draft faces' if mode=='apply' else 'Printable thread body',
-                                            'Select faces sharing a circular axis on one body' if mode=='apply' else 'Select one add-in-owned body')
+                                            'Select faces sharing a circular axis across bodies and occurrences' if mode=='apply' else 'Select one add-in-owned body')
             select.addSelectionFilter('Faces' if mode=='apply' else 'SolidBodies');select.setSelectionLimits(1,0 if mode=='apply' else 1)
             self.values['target']=select;self.tip(select,'target')
         if mode=='create':self.dropdown(inputs,'output','Output',['Matched pair','Screw','Female'])
@@ -157,9 +159,11 @@ class Session:
         self.length(inputs,'radial_clearance','3D print tolerance',.2)
         if mode=='fit':self.values['radial_clearance'].tooltipDescription+=' Fit Test creates four nearby clearances for comparison; component names identify each sample.'
         self.values['derived']=inputs.addTextBoxCommandInput('derived','','',2,True)
-        self.values['live_preview']=inputs.addBoolValueInput('live_preview','Solid Preview' if mode=='apply' else 'Live Preview',mode=='apply','',mode!='apply')
+        self.values['live_preview']=inputs.addBoolValueInput('live_preview','Solid Preview (Beta)' if mode=='apply' else 'Live Preview',mode=='apply','',mode!='apply')
         self.tip(self.values['live_preview'],'live_preview')
         if mode=='apply':
+            self.values['refresh_preview']=inputs.addBoolValueInput('refresh_preview','Refresh Solid Preview',False,'',False)
+            self.values['refresh_preview'].isVisible=False
             self.values['preview_selection']=inputs.addTextBoxCommandInput('preview_selection','','',1,True)
             self.values['preview_selection'].isVisible=False
 
@@ -178,6 +182,7 @@ class Session:
         self.values['blind']=more.addBoolValueInput('blind','Blind cap',True,'',False);self.tip(self.values['blind'],'blind')
         self.length(more,'floor','Floor thickness',2)
         self.dropdown(more,'knob','Knob',['Lobed','Cylinder','None'])
+        self.dropdown(more,'knob_sizing','Knob sizing',['Automatic','Custom'])
         self.length(more,'knob_diameter','Knob diameter',26);self.length(more,'knob_height','Knob height',6)
         self.values['lobes']=more.addIntegerSpinnerCommandInput('lobes','Knob lobes',3,12,1,6);self.tip(self.values['lobes'],'lobes')
         if mode=='apply':
@@ -191,13 +196,13 @@ class Session:
             events.add(event,callback,self.handlers)
         self.restore_preferences()
         if mode=='apply':self.values['live_preview'].value=False
-        self.update_visibility();self.update_status()
+        self.update_auto_dimensions();self.update_visibility();self.update_status()
 
     def restore_preferences(self):
         saved=preferences.load(self.mode)
         if not saved:return
         try:
-            spec=Spec.from_json(saved['recipe'])
+            spec=Spec(**json.loads(saved['recipe'])['spec']) if saved.get('inherit_thread') else Spec.from_json(saved['recipe'])
             if self.mode!='edit' and 'cut_screw' not in json.loads(saved['recipe'])['spec']:
                 spec=replace(spec,cut_screw=True,print_on_plate=True)
             if self.mode!='edit' and 'section' not in json.loads(saved['recipe'])['spec']:
@@ -211,15 +216,17 @@ class Session:
                 value=saved.get(key)
                 if key in self.values and isinstance(value,(int,float)) and math.isfinite(value):
                     self.values[key].expression=f'{value:g} mm'
-            self.auto_female=saved.get('auto_female',False) is True
-            self.auto_knob=saved.get('auto_knob',False) is True
+            self.auto_female=saved.get('auto_female',True) is True
+            self.auto_knob=saved.get('auto_knob',True) is True
+            self.auto_knob_height=saved.get('auto_knob_height',self.auto_knob) is True
+            self.select_name('knob_sizing','Automatic' if self.auto_knob and self.auto_knob_height else 'Custom')
         except (ValueError,KeyError,TypeError,AttributeError):pass
         finally:self.loading=False
 
     def save_preferences(self):
         try:
             spec=self.read()
-            state={'recipe':spec.to_json(),'auto_female':self.auto_female,'auto_knob':self.auto_knob}
+            state={'recipe':spec.to_json(),'auto_female':self.auto_female,'auto_knob':self.auto_knob,'auto_knob_height':self.auto_knob_height}
             for key in ('live_preview','reverse'):
                 if key in self.values:state[key]=self.values[key].value
             for key in ('x','y','z'):
@@ -240,7 +247,14 @@ class Session:
     def selected_name(self,key):return self.values[key].selectedItem.name
     def select_name(self,key,name):
         for item in self.values[key].listItems:item.isSelected=item.name==name
-    def mm(self,key):return self.values[key].value*10
+    def mm(self,key):
+        saved=self.target_dimensions.get(key)
+        if saved and self.values[key].expression==saved[1]:return saved[0]
+        return self.values[key].value*10
+
+    def measured_dimension(self,key,value):
+        self.values[key].expression=f'{value:.3g} mm'
+        self.target_dimensions[key]=(value,self.values[key].expression)
 
     def read(self):
         data=asdict(Spec())
@@ -267,14 +281,17 @@ class Session:
     def expressions(self):
         keys=('root_diameter','pitch','thread_size','length','width','crest','radius','entry','radial_clearance',
               'axial_clearance','female_diameter','engagement','floor','knob_diameter','knob_height')
-        return {key:self.values[key].expression for key in keys}
+        result={key:(f'{self.mm(key):.12g} mm' if key in self.target_dimensions and self.values[key].expression==self.target_dimensions[key][1] else self.values[key].expression) for key in keys}
+        result.update(_auto_knob=self.auto_knob,_auto_knob_height=self.auto_knob_height)
+        return result
 
     def load(self,spec):
         self.loading=True
         try:
             for key in ('root_diameter','pitch','length','width','crest','radius','entry','radial_clearance',
                         'axial_clearance','female_diameter','engagement','floor','knob_diameter','knob_height'):
-                self.values[key].expression=f'{getattr(spec,key):.12g} mm'
+                if key in ('root_diameter','length'):self.measured_dimension(key,getattr(spec,key))
+                else:self.values[key].expression=f'{getattr(spec,key):.12g} mm'
             self.values['thread_size'].expression=f'{spec.thread_size:.12g} mm'
             self.print_on_plate=spec.print_on_plate
             self.values['swap_threads'].value=not spec.cut_screw
@@ -283,7 +300,7 @@ class Session:
             self.select_name('knob',spec.knob);self.select_name('profile_mode','Circular / On Center' if spec.section=='Circular' else 'Balanced' if spec.balanced_profile else 'Custom')
             self.select_name('fit_preset','Standard FDM — 0.2 mm/side' if math.isclose(spec.radial_clearance,.2) else
                              'Loose FDM — 0.5 mm/side' if math.isclose(spec.radial_clearance,.5) else 'Custom')
-            self.auto_female=False;self.auto_knob=False
+            self.auto_female=False;self.auto_knob=False;self.auto_knob_height=False
         finally:self.loading=False
 
     def update_auto_dimensions(self):
@@ -292,7 +309,9 @@ class Session:
         self.loading=True
         try:
             if self.auto_female:self.values['female_diameter'].expression=f'{major+8:g} mm'
-            if self.auto_knob:self.values['knob_diameter'].expression=f'{major+12:g} mm'
+            diameter,height=default_knob_dimensions(major)
+            if self.auto_knob:self.values['knob_diameter'].expression=f'{diameter:.3g} mm'
+            if self.auto_knob_height:self.values['knob_height'].expression=f'{height:.3g} mm'
         finally:self.loading=False
 
     def update_visibility(self):
@@ -305,10 +324,10 @@ class Session:
             self.values[key].isVisible=female and self.mode not in ('fit','apply')
         if self.mode=='apply':
             self.values['radial_clearance'].isVisible=True;self.values['axial_clearance'].isVisible=True;self.values['fit_preset'].isVisible=True
-        for key in ('knob','knob_diameter','knob_height','lobes'):self.values[key].isVisible=screw and self.mode!='apply'
+        for key in ('knob','knob_sizing','knob_diameter','knob_height','lobes'):self.values[key].isVisible=screw and self.mode!='apply'
         lobed=self.selected_name('knob')=='Lobed';has_knob=self.selected_name('knob')!='None'
         self.values['lobes'].isVisible=self.values['lobes'].isVisible and lobed
-        for key in ('knob_diameter','knob_height'):self.values[key].isVisible=self.values[key].isVisible and has_knob
+        for key in ('knob_sizing','knob_diameter','knob_height'):self.values[key].isVisible=self.values[key].isVisible and has_knob
         self.values['floor'].isVisible=self.values['floor'].isVisible and self.values['blind'].value
         self.values['root_diameter'].isEnabled=self.mode!='apply'
         if self.mode=='fit':
@@ -327,7 +346,8 @@ class Session:
                 if self.preview_targets is not None:return
                 targets=self.target_reference.capture(select)
                 if targets is None:self.values['live_preview'].value=False;return
-                self.preview_targets=targets
+                self.preview_targets=targets;self.preview_requested=True;self.preview_dirty=False
+                self.values['refresh_preview'].isVisible=True
                 count=len(selection.selected_faces(targets))
                 self.values['preview_selection'].text=f'{count} face(s) selected — turn Solid Preview off to change selection.'
                 self.values['preview_selection'].isVisible=True
@@ -339,18 +359,33 @@ class Session:
                     for face in selection.selected_faces(targets):
                         if face.isValid:select.addSelection(face)
                 self.target_reference.capture(select)
-                self.values['preview_selection'].isVisible=False
+                self.values['preview_selection'].isVisible=False;self.values['refresh_preview'].isVisible=False
+                self.preview_requested=False;self.preview_dirty=False;self.preview_tool_cache=None
         finally:self.loading=False
 
     def changed(self,args):
         if self.loading:return
-        key=args.input.id;self.preview_key=None
+        key=args.input.id
+        if key in ('derived','status','build_version','preview_selection','advanced'):return
+        if key=='refresh_preview':
+            if self.values[key].value:
+                self.preview_requested=True;self.values[key].value=False
+            return
+        if self.mode=='apply' and key not in ('target','live_preview') and self.values['live_preview'].value:
+            self.renderer.clear();self.preview_dirty=True;self.preview_requested=False
+        if self.mode!='apply':self.preview_key=None
+        if key in ('root_diameter','length'):self.target_dimensions.pop(key,None)
         if key=='live_preview' and self.mode=='apply':self.toggle_solid_preview()
         if key=='target' and self.preview_targets is not None:return
         if key=='target':self.target_reference.capture(self.values['target'])
         try:
             if key=='female_diameter':self.auto_female=False
-            elif key=='knob_diameter':self.auto_knob=False
+            elif key in ('knob_diameter','knob_height'):
+                self.auto_knob=False;self.auto_knob_height=False
+                self.loading=True;self.select_name('knob_sizing','Custom');self.loading=False
+            elif key=='knob_sizing':
+                automatic=self.selected_name(key)=='Automatic';self.auto_knob=automatic;self.auto_knob_height=automatic
+                self.update_auto_dimensions()
             elif key in ('root_diameter','thread_size','profile_mode','swap_threads'):self.update_auto_dimensions()
             if key=='fit_preset':
                 name=self.selected_name(key)
@@ -365,8 +400,8 @@ class Session:
                     self.load(Spec.from_json(json.dumps(record['recipe'])))
                 else:
                     _,_,diameter,length,_=selection.cylinder_frame(target,self.values['reverse'].value)
-                    self.loading=True;self.values['root_diameter'].expression=f'{diameter} mm'
-                    if key=='target':self.values['length'].expression=f'{length} mm'
+                    self.loading=True;self.measured_dimension('root_diameter',diameter)
+                    if key=='target':self.measured_dimension('length',length)
                     self.loading=False
             self.update_visibility();self.update_status()
             self.save_preferences()
@@ -379,7 +414,7 @@ class Session:
             if self.mode=='create' and s.section=='Circular':native.validate_clearance(s,s.output!='Screw')
             self.values['derived'].text=(f'Outside Ø {s.major_diameter:g} mm  •  {s.turns:.3g} revolutions\n'
                                          f'Lead {s.lead:g} mm/rev  •  {s.clearance_label}')
-            self.values['status'].text=('Solid Preview: shaded result; native normal-clearance finishing and edge chamfers may differ slightly. Turn preview off to change faces.' if self.mode=='apply' and self.values['live_preview'].value else 'Circular: native Coil, uniform nut clearance and print-edge chamfer. Edit PT parameters in Modify → Change Parameters.' if self.mode in ('create','apply') and s.section=='Circular' else 'Balanced / Custom: original legacy construction and fit allowances; native offset conversion is unfinished.' if self.mode in ('create','apply') else 'Ready — preview is approximate; OK creates the exact solid.')
+            self.values['status'].text=(('Solid Preview (Beta) is out of date. Click Refresh Solid Preview to rebuild it. Settings changes do not run geometry work.' if self.preview_dirty else 'Solid Preview (Beta): cached snapshot. Click Refresh after editing settings; native normal clearance and chamfers may differ slightly.') if self.mode=='apply' and self.values['live_preview'].value else 'Circular: native Coil, uniform nut clearance and print-edge chamfer. Edit PT parameters in Modify → Change Parameters.' if self.mode in ('create','apply') and s.section=='Circular' else 'Balanced / Custom: original legacy construction and fit allowances; native offset conversion is unfinished.' if self.mode in ('create','apply') else 'Ready — preview is approximate; OK creates the exact solid.')
             return True
         except Exception as error:
             self.values['derived'].text='';self.values['status'].text=str(error);return False
@@ -425,6 +460,10 @@ class Session:
 
     def render_preview(self):
         if not self.values['live_preview'].value:self.renderer.clear();return
+        if self.mode=='apply' and not self.preview_requested:
+            if not self.preview_dirty:self.display_snapshot()
+            return
+        if self.mode=='apply':self.preview_requested=False
         try:
             spec=self.read();target_token=''
             if self.mode in ('apply','edit'):
@@ -433,13 +472,22 @@ class Session:
                 target_token=tuple(f.entityToken for f in selection.selected_faces(target))
             position=tuple(self.values[k].value for k in ('x','y','z')) if self.mode not in ('apply','edit') else ()
             key=(spec,self.mode,target_token,position,self.values.get('reverse').value if 'reverse' in self.values else False,self.edit_role)
-            if key==self.preview_key:return
+            if self.mode=='apply' and key==self.preview_key and self.preview_snapshot:
+                self.preview_dirty=False;self.display_snapshot();return
+            if key==self.preview_key and self.renderer.group and self.renderer.group.isValid:
+                self.preview_dirty=False;return
             self.preview_key=key
             if self.mode=='apply':
-                face,frame,_,_,internal=selection.cylinder_frame(target,self.values['reverse'].value)
-                candidate=selection.preview_body(design(False,True),target,spec,self.values['reverse'].value)
-                self.renderer.begin(face.body.parentComponent)
-                self.renderer.draw_body(candidate,face.body,'Applied thread solid preview')
+                d=design(False,True);self.preview_snapshot=[]
+                plans=selection.shared_frames(target,self.values['reverse'].value)
+                tool_key=(spec,plans[0][1][3])
+                if not self.preview_tool_cache or self.preview_tool_cache[0]!=tool_key:
+                    self.preview_tool_cache=(tool_key,selection.preview_tool(d,spec,plans[0][1][3]))
+                for group,shared in plans:
+                    candidate=selection.preview_body(d,group,spec,self.values['reverse'].value,shared,self.preview_tool_cache[1])
+                    context=group[0].assemblyContext
+                    if context:b.transform(candidate,context.transform2)
+                    self.preview_snapshot.append((self.renderer.prepare_body(candidate),group[0].body))
             elif self.mode=='edit':
                 native=target.nativeObject or target;self.renderer.begin(native.parentComponent)
                 if self.edit_role=='Female':self.draw_female(spec,b.M())
@@ -455,11 +503,24 @@ class Session:
                     if spec.output!='Screw':
                         offset=(max(spec.knob_diameter,spec.major_diameter)+spec.female_diameter)/2+5 if spec.output=='Matched pair' else 0
                         self.draw_female(spec,self.placement(offset))
-            self.renderer.finish()
+            if self.mode=='apply':
+                self.preview_dirty=False;self.display_snapshot()
+            else:self.renderer.finish()
+            self.preview_dirty=False
         except Exception as error:
             self.renderer.clear();self.preview_key=locals().get('key')
             self.values['status'].text=f'Preview unavailable: {error}. OK still creates the exact solid.'
             core.Application.get().log(traceback.format_exc())
+
+    def display_snapshot(self):
+        if not self.values['live_preview'].value or self.preview_dirty:return
+        try:
+            self.renderer.begin(design(False,True).rootComponent)
+            for candidate,target in self.preview_snapshot:
+                self.renderer.draw_prepared(candidate,target,'Applied thread solid preview')
+            self.renderer.finish()
+        except Exception as error:
+            self.renderer.clear();self.values['status'].text=f'Preview unavailable: {error}'
 
     def bodies(self,spec):
         root=design().rootComponent;result=[]
@@ -479,7 +540,9 @@ class Session:
             result.append(('Female',b.female(root,spec),self.placement(offset)))
         return result
 
-    def preview(self,args):self.render_preview();args.isValidResult=False
+    def preview(self,args):
+        self.render_preview()
+        args.isValidResult=False
 
     def execute(self,args):
         try:

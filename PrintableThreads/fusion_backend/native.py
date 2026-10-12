@@ -1,9 +1,13 @@
 """Editable native feature construction. Legacy Base Feature recipes are untouched."""
 import math
+import json
+from dataclasses import replace
+from ..model.spec import Spec
+from ..model.solid import validate_applied_results
 from pathlib import Path
 import adsk.core as core
 import adsk.fusion as fusion
-from .selection import cylinder_frame,selected_faces,validate_draft
+from .selection import cylinder_frame,selected_faces,validate_draft,target_groups,shared_frames,overlaps_interval
 from ..geometry import backend as b
 
 P=core.Point3D.create
@@ -30,7 +34,12 @@ class Builder:
                 'engagement':('engagement',spec.engagement),'floor':('floor',spec.floor),
                 'knob_diameter':('knob_diameter',spec.knob_diameter),'knob_height':('knob_height',spec.knob_height),
                 'entry':('entry',spec.entry),'width':('width',spec.width),'crest':('crest',spec.crest),'radius':('radius',spec.radius)}
-        for key,(input_key,value) in values.items():self.parameter(key,self.expr.get(input_key,f'{value:.12g} mm'),'mm')
+        for key,(input_key,value) in values.items():
+            expression=self.expr.get(input_key,f'{value:.12g} mm')
+            if key in ('knob_diameter','knob_height') and self.expr.get('_auto_'+('knob' if key=='knob_diameter' else 'knob_height')):
+                major=self.p['diameter'] if spec.cut_screw else f'({self.p["diameter"]}+{1 if spec.section=="Circular" else 2}*{self.p["section"]})'
+                expression=f'max(({major})+2 mm;1.6*({major}))' if key=='knob_diameter' else f'max(2 mm;min(12 mm;0.3*({major})))'
+            self.parameter(key,expression,'mm')
         self.parameter('edge_chamfer',f'min(0.2 mm;min({self.p["section"]}/10;({self.p["pitch"]}-{self.p["section"]})/4))','mm')
         self.parameter('starts',str(spec.starts),'')
         self.parameter('phase',f'{spec.phase:.12g} deg','deg')
@@ -272,8 +281,34 @@ def validate_clearance(spec,nut):
         raise ValueError('Section size plus twice the nut tolerance must leave at least 0.1 mm between turns. Increase pitch or reduce section size/tolerance.')
 
 
-def apply(design,selected,spec,reverse=False,expressions=None):
-    face,frame,diameter,available,internal=cylinder_frame(selected,reverse)
+def apply(design,selected,spec,reverse=False,expressions=None,shared=None,builders=None):
+    if shared is None and len(target_groups(selected))>1:
+        plans=[(group,frame) for group,frame in shared_frames(selected,reverse) if overlaps_interval(group,frame,spec.length)]
+        built=[]
+        # Repeated definitions can only represent one local helical phase.
+        # Reject incompatible shared instances before modifying any target.
+        seen={};unique=[]
+        for group,placement in plans:
+            body=(group[0].nativeObject or group[0]).body
+            token=body.entityToken
+            if token in seen:
+                prior=seen[token]
+                old=prior.copy();old.invert();relative=placement[0].copy();relative.transformBy(old)
+                origin=relative.translation
+                x=core.Vector3D.create(relative.getCell(0,0),relative.getCell(1,0),relative.getCell(2,0))
+                angle=math.atan2(x.y,x.x)
+                difference=angle-(-1 if spec.left_hand else 1)*2*math.pi*origin.z*10/spec.lead
+                if abs(relative.getCell(2,2)-1)>1e-6 or math.hypot(origin.x,origin.y)>1e-5 or abs(math.sin(difference/2))>1e-5 or spec.length<placement[2]-1e-5:
+                    raise ValueError('These occurrences share a component definition but need different local thread geometry. Use Paste New to make those instances independent, then select them together.')
+                continue
+            seen[token]=placement[0];unique.append((group,placement))
+        try:
+            return [apply(design,group,spec,reverse,expressions,placement,built) for group,placement in unique]
+        except Exception:
+            for builder in reversed(built):builder.rollback()
+            raise
+    face=selected_faces(selected)[0].nativeObject or selected_faces(selected)[0]
+    frame,diameter,available,internal=shared or cylinder_frame(selected,reverse)[1:]
     if spec.length>available+1e-5:raise ValueError(f'Thread length exceeds selected face ({available:g} mm).')
     if abs(spec.root_diameter-diameter)>1e-5:raise ValueError('Diameter must match the selected cylinder.')
     validate_clearance(spec,internal);validate_draft(selected,spec)
@@ -282,9 +317,10 @@ def apply(design,selected,spec,reverse=False,expressions=None):
         from .selection import expanded_reference
         reference=expanded_reference(design,selected,spec.height)
     builder=Builder(design,spec,expressions)
+    if builders is not None:builders.append(builder)
     try:
         context=selected_faces(selected)[0].assemblyContext
-        target=face.body;c=target.parentComponent
+        target=face.body;c=target.parentComponent;original_regions=target.lumps.count
         if internal and spec.section=='Circular':target=builder.offset_bore(c,selected)
         if context:target=target.createForAssemblyContext(context)
         # Keep all construction editable in a local frame, and combine into original body.
@@ -304,10 +340,13 @@ def apply(design,selected,spec,reverse=False,expressions=None):
             ribs=clipped
         tools=[body.createForAssemblyContext(occ) for body in ribs]
         results=builder.combine(c,target,tools,OP.JoinFeatureOperation if internal==spec.cut_screw else OP.CutFeatureOperation,'Apply printable thread',all_results=True)
+        validate_applied_results(results,original_regions,internal==spec.cut_screw)
         for result in results:
             result=builder.chamfer_lands(c,result,internal,context)
             b.check(result,'Applied native thread')
             result.attributes.add('PrintableThreads.native','parameters',builder.prefix)
+            result.attributes.add('PrintableThreads.native','recipe',spec.to_json())
+            result.attributes.add('PrintableThreads.native','role','Applied nut' if internal else 'Applied screw')
         target=results[0]
         builder.finish('Printable Threads — Apply nut' if internal else 'Printable Threads — Apply screw')
         return target
@@ -341,8 +380,31 @@ def create(design,spec,placement,expressions=None):
                 feature=c.features.moveFeatures.add(inp);feature.name='Keep flat face on print plate';body=feature.bodies.item(0)
             b.check(body,'Created native thread')
             body.attributes.add('PrintableThreads.native','parameters',builder.prefix)
+            body.attributes.add('PrintableThreads.native','recipe',spec.to_json())
+            body.attributes.add('PrintableThreads.native','role','Female' if female else 'Screw')
+            body.attributes.add('PrintableThreads.native','head_settings',json.dumps({key:builder.expr.get(key,False) for key in ('_auto_knob','_auto_knob_height')}))
             body.name='Printable nut' if female else 'Printable screw'
         builder.finish('Printable Threads — Create')
         return made
     except Exception:
         builder.rollback();raise
+
+
+def read_recipe(design,body):
+    """Recover a complete screw/head recipe using the current live parameters."""
+    body=body.nativeObject or body
+    recipe=body.attributes.itemByName('PrintableThreads.native','recipe')
+    prefix=body.attributes.itemByName('PrintableThreads.native','parameters')
+    if not recipe or not prefix:raise ValueError('This body has no saved native thread/head recipe.')
+    spec=Spec.from_json(recipe.value);values={}
+    names={'root_diameter':'diameter','thread_size':'section','length':'length','pitch':'pitch','starts':'starts','phase':'phase','radial_clearance':'tolerance','female_diameter':'nut_diameter','engagement':'engagement','floor':'floor','knob_diameter':'knob_diameter','knob_height':'knob_height','entry':'entry','width':'width','crest':'crest','radius':'radius'}
+    for field,key in names.items():
+        param=design.userParameters.itemByName(prefix.value+key)
+        if not param:continue
+        if field=='starts':values[field]=round(param.value)
+        elif field=='phase':values[field]=math.degrees(param.value)
+        else:values[field]=param.value*10
+    size=values.pop('thread_size',spec.thread_size)
+    if spec.section=='Circular':values.update(height=size/2,width=size,crest=size/2,radius=0)
+    else:values['height']=size
+    return replace(spec,**values).validate()

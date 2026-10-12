@@ -1,0 +1,22 @@
+{
+  "version": "0.5.5",
+  "commands": [
+    [
+      "create",
+      true
+    ],
+    [
+      "apply",
+      true
+    ],
+    [
+      "edit",
+      true
+    ],
+    [
+      "fit",
+      true
+    ]
+  ],
+  "hot_reload": true
+}

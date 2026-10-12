@@ -1,0 +1,141 @@
+{
+  "cases": [
+    {
+      "placement": "bodies",
+      "internal": false,
+      "cut": true,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.05026548245743455,
+        0.05026548245743454
+      ],
+      "after": [
+        0.034008374454715426,
+        0.03400837445471554
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": false,
+      "cut": false,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.05026548245743455,
+        0.05026548245743454
+      ],
+      "after": [
+        0.0743990189680028,
+        0.07440108361323676
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": true,
+      "cut": true,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.4021238596595108,
+        0.4021238596595108
+      ],
+      "after": [
+        0.4061496808617632,
+        0.4060724234071187
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": true,
+      "cut": false,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.4021238596595108,
+        0.4021238596595108
+      ],
+      "after": [
+        0.36130081553795396,
+        0.3613124026880723
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": false,
+      "cut": true,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.05026548245743455,
+        0.05026548245743455
+      ],
+      "after": [
+        0.034008568383815045,
+        0.03400856838381472
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": false,
+      "cut": false,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.05026548245743455,
+        0.05026548245743455
+      ],
+      "after": [
+        0.07439905108355162,
+        0.07440142402808393
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": true,
+      "cut": true,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.4021238596595108,
+        0.4021238596595108
+      ],
+      "after": [
+        0.4061342606829714,
+        0.40607271567640213
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": true,
+      "cut": false,
+      "target_solids": 2,
+      "combine_features": 2,
+      "remaining_thread_tools": 0,
+      "unselected_unchanged": true,
+      "before": [
+        0.4021238596595108,
+        0.4021238596595108
+      ],
+      "after": [
+        0.36130935168340866,
+        0.36131107302318943
+      ]
+    }
+  ],
+  "passed": true
+}

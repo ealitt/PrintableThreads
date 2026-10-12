@@ -1,0 +1,16 @@
+{
+  "baseline": {
+    "snapshot_seconds": 2.9533017499998095,
+    "render_seconds": 0.14052545900085534,
+    "helix_builds": 2,
+    "targets": 2
+  },
+  "optimized": {
+    "snapshot_seconds": 1.5238612499997544,
+    "render_seconds": 0.05081354199865018,
+    "helix_builds": 1,
+    "targets": 2
+  },
+  "speedup": 1.9380384861156392,
+  "passed": true
+}

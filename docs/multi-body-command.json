@@ -1,0 +1,16 @@
+{
+  "version": "0.5.4",
+  "diameter_display": "4 mm",
+  "length_display": "7.3 mm",
+  "exact_length": 7.299983551873968,
+  "parameter_length": "7.29998355187 mm",
+  "preview_valid": true,
+  "hidden_bodies": 2,
+  "target_count": 2,
+  "commit_passed": true,
+  "cancel_cleanup_passed": true,
+  "volumes": [
+    0.03101486174836759,
+    0.03101212626304061
+  ]
+}

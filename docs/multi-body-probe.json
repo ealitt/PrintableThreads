@@ -1,0 +1,517 @@
+{
+  "cases": [
+    {
+      "placement": "bodies",
+      "internal": false,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.03101486174836759,
+        0.031012126263040618
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": false,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.031024390697665695,
+        0.031028292825762763
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": false,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06789098709278288,
+        0.06787100173440402
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": false,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06787662019886842,
+        0.06785101368370938
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": true,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.36429371793783494,
+        0.36436210681596076
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": true,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3642150714031759,
+        0.36443114384781217
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": true,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3219455273285286,
+        0.3219449233775489
+      ]
+    },
+    {
+      "placement": "bodies",
+      "internal": true,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.32192489433077265,
+        0.3219402836934219
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": false,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.03101486174836759,
+        0.03101212626304061
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": false,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.031024390697665695,
+        0.031028292825762888
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": false,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06789098709278288,
+        0.06787100173440402
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": false,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06787662019886842,
+        0.06785101368370937
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": true,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.36429371793783494,
+        0.3643621068159608
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": true,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3642150714031759,
+        0.36443114384781217
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": true,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3219455273285286,
+        0.3219449233775509
+      ]
+    },
+    {
+      "placement": "occurrences",
+      "internal": true,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.0,
+      "length": 7.299983551873968,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.32192489433077265,
+        0.32194028369342165
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": false,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.03101998211154448,
+        0.03101542264121309
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": false,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.031013068508179968,
+        0.031014730548126822
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": false,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06789206371310694,
+        0.06786555006445769
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": false,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06787172812655357,
+        0.06785375810770648
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": true,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3642844324482859,
+        0.36436494454012025
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": true,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.36422640865022693,
+        0.3644320667544425
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": true,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3219372055045302,
+        0.32196156782913854
+      ]
+    },
+    {
+      "placement": "rotated",
+      "internal": true,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.32198284650129994,
+        0.3219463774534558
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": false,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.03101998211154448,
+        0.03101542264121309
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": false,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.031013068508179968,
+        0.031014730548126822
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": false,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06789206371310694,
+        0.06786555006445769
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": false,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.045867149395789134,
+        0.045867149395789134
+      ],
+      "after": [
+        0.06787172812655357,
+        0.06785375810770648
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": true,
+      "cut": true,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3642844324482859,
+        0.36436494454012025
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": true,
+      "cut": true,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.36422640865022693,
+        0.3644320667544425
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": true,
+      "cut": false,
+      "reverse": false,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.3219372055045302,
+        0.32196156782913854
+      ]
+    },
+    {
+      "placement": "nested",
+      "internal": true,
+      "cut": false,
+      "reverse": true,
+      "diameter": 4.000000000000001,
+      "length": 7.2999835518739715,
+      "before": [
+        0.3669371951663129,
+        0.3669371951663129
+      ],
+      "after": [
+        0.32198284650129994,
+        0.3219463774534558
+      ]
+    }
+  ],
+  "passed": true
+}

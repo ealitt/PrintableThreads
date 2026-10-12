@@ -1,0 +1,25 @@
+{
+  "cases": [
+    {
+      "kind": "shared-compatible",
+      "passed": true
+    },
+    {
+      "kind": "shared-incompatible",
+      "passed": true
+    },
+    {
+      "kind": "gap",
+      "passed": true
+    },
+    {
+      "kind": "gap-joined",
+      "passed": true
+    },
+    {
+      "kind": "partial-length",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,562 @@
+[
+  {
+    "event": "derived",
+    "time": 14691.598667291,
+    "sweeps": 0,
+    "pitch": "4 mm",
+    "dirty": false,
+    "requested": true,
+    "valid": false,
+    "visible": true
+  },
+  {
+    "event": "status",
+    "time": 14691.6104015,
+    "sweeps": 0,
+    "pitch": "4 mm",
+    "dirty": false,
+    "requested": true,
+    "valid": false,
+    "visible": true
+  },
+  {
+    "event": "derived",
+    "time": 14691.681495708,
+    "sweeps": 0,
+    "pitch": "4 mm",
+    "dirty": false,
+    "requested": true,
+    "valid": false,
+    "visible": true
+  },
+  {
+    "event": "preview",
+    "time": 14692.022068416,
+    "sweeps": 1,
+    "pitch": "4 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.3786935,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.403299958,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.4395995,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14692.451252708,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.469661375,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.470223125,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.503077833,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14692.515830958,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.539908208,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.540594875,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.564754958,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14692.700108958,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.719468875,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.719976125,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.744496875,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14692.756758083,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.780542291,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.781094375,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.804864791,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14692.845574625,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.862715583,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.863216041,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.886800541,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14692.899082583,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.92660825,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14692.927166708,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14692.9510315,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14693.026201666,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.044619416,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14693.045211458,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.068929416,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14693.080937708,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.105999833,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14693.106594125,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.130406583,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14693.792459,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.816558375,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14693.817160166,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.845120041,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14693.858019125,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.884599625,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14693.885236166,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.911078625,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14693.976317875,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14693.995364333,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14693.995978125,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14694.020833708,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "derived",
+    "time": 14694.033364208,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14694.061767375,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "status",
+    "time": 14694.062513125,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "preview",
+    "time": 14694.086393583,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": true,
+    "visible": false
+  },
+  {
+    "event": "destroy",
+    "time": 14713.376203208,
+    "sweeps": 2,
+    "pitch": "5 mm",
+    "dirty": false,
+    "requested": false,
+    "valid": false,
+    "visible": true
+  }
+]
